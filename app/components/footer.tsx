@@ -12,7 +12,14 @@ export default function Footer() {
           </p>
         </div>
         <div className="flex justify-center items-center mt-2">
-          <FaGithub />
+          <a
+            href="https://github.com/DaikiKazusaki/database"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-600 hover:text-black transition-colors"
+          >
+            <FaGithub size={24} />
+          </a>
         </div>
         <div className="text-sm text-muted-foreground flex justify-center items-center mt-2">
           This site is created by Daiki Kazusaki.
