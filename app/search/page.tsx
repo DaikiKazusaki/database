@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -31,7 +30,6 @@ interface GameRecord {
 }
 
 export default function SearchPage() {
-  const router = useRouter()
   const [records, setRecords] = useState<GameRecord[]>([])
   const [filteredRecords, setFilteredRecords] = useState<GameRecord[]>([])
   const [searchTerm, setSearchTerm] = useState("")
