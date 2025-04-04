@@ -13,6 +13,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { Copy, Check } from "lucide-react"
+import { toast } from "@/components/ui/use-toast"
+import { Toaster } from "@/components/ui/toaster"
 import PasswordProtection from "./password"
 
 interface PlayerInfo {
@@ -35,6 +38,8 @@ export default function SearchPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedRecord, setSelectedRecord] = useState<GameRecord | null>(null)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [copyingId, setCopyingId] = useState<string | null>(null)
+  const [copyingDialog, setCopyingDialog] = useState(false)
 
   useEffect(() => {
     // Check if user is authenticated
@@ -90,6 +95,47 @@ export default function SearchPage() {
       setRecords(parsedRecords)
       setFilteredRecords(parsedRecords)
     }
+  }
+
+  const copyToClipboard = async (text: string, id: string | null = null) => {
+    try {
+      if (id) {
+        setCopyingId(id)
+      } else {
+        setCopyingDialog(true)
+      }
+
+      await navigator.clipboard.writeText(text)
+      toast({
+        title: "コピー完了",
+        description: "棋譜がクリップボードにコピーされました",
+      })
+
+      // Reset the copying state after a short delay
+      setTimeout(() => {
+        setCopyingId(null)
+        setCopyingDialog(false)
+      }, 2000)
+    } catch {
+      toast({
+        title: "エラー",
+        description: "棋譜のコピーに失敗しました",
+        variant: "destructive",
+      })
+      setCopyingId(null)
+      setCopyingDialog(false)
+    }
+  }
+
+  // Function to generate a formatted record for copying
+  const getFormattedRecord = (record: GameRecord) => {
+    return `対局情報:
+日付: ${record.date}
+先手: ${record.sente.university} ${record.sente.name} (${record.sente.year}年)
+後手: ${record.gote.university} ${record.gote.name} (${record.gote.year}年)
+
+棋譜:
+${record.record}`
   }
 
   if (!isAuthenticated) {
@@ -181,15 +227,56 @@ export default function SearchPage() {
                                 <p>学年: {selectedRecord?.gote.year}年</p>
                               </div>
                             </div>
-                            <div>
-                              <h3 className="font-semibold">棋譜</h3>
-                              <pre className="mt-2 p-4 bg-muted rounded-md overflow-auto whitespace-pre-wrap">
+                            <div className="relative">
+                              <div className="flex justify-between items-center">
+                                <h3 className="font-semibold">棋譜</h3>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="flex items-center gap-1"
+                                  onClick={() => selectedRecord && copyToClipboard(getFormattedRecord(selectedRecord))}
+                                  disabled={copyingDialog}
+                                >
+                                  {copyingDialog ? (
+                                    <>
+                                      <Check className="h-4 w-4" />
+                                      コピー済み
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Copy className="h-4 w-4" />
+                                      棋譜をコピー
+                                    </>
+                                  )}
+                                </Button>
+                              </div>
+                              <pre className="mt-2 p-4 bg-muted rounded-md overflow-auto whitespace-pre-wrap max-h-[300px]">
                                 {selectedRecord?.record}
                               </pre>
                             </div>
                           </div>
                         </DialogContent>
                       </Dialog>
+
+                      <Button
+                        variant="outline"
+                        className="flex items-center gap-1"
+                        onClick={() => copyToClipboard(getFormattedRecord(record), record.id)}
+                        disabled={copyingId === record.id}
+                      >
+                        {copyingId === record.id ? (
+                          <>
+                            <Check className="h-4 w-4" />
+                            コピー済み
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="h-4 w-4" />
+                            コピー
+                          </>
+                        )}
+                      </Button>
+
                       <Button variant="destructive" onClick={() => handleDelete(record.id)}>
                         削除
                       </Button>
@@ -201,6 +288,7 @@ export default function SearchPage() {
           </div>
         )}
       </div>
+      <Toaster />
     </div>
   )
 }
