@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -13,6 +14,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import PasswordProtection from "./password"
 
 interface PlayerInfo {
   university: string
@@ -29,18 +31,26 @@ interface GameRecord {
 }
 
 export default function SearchPage() {
+  const router = useRouter()
   const [records, setRecords] = useState<GameRecord[]>([])
   const [filteredRecords, setFilteredRecords] = useState<GameRecord[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedRecord, setSelectedRecord] = useState<GameRecord | null>(null)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   useEffect(() => {
-    // Load records from localStorage
-    const storedRecords = localStorage.getItem("shogiRecords")
-    if (storedRecords) {
-      const parsedRecords: GameRecord[] = JSON.parse(storedRecords)
-      setRecords(parsedRecords)
-      setFilteredRecords(parsedRecords)
+    // Check if user is authenticated
+    const authStatus = localStorage.getItem("shogiAuth")
+    if (authStatus === "authenticated") {
+      setIsAuthenticated(true)
+
+      // Load records from localStorage
+      const storedRecords = localStorage.getItem("shogiRecords")
+      if (storedRecords) {
+        const parsedRecords: GameRecord[] = JSON.parse(storedRecords)
+        setRecords(parsedRecords)
+        setFilteredRecords(parsedRecords)
+      }
     }
   }, [])
 
@@ -70,6 +80,22 @@ export default function SearchPage() {
     setRecords(updatedRecords)
     setFilteredRecords(updatedRecords.filter((record) => filteredRecords.some((fr) => fr.id === record.id)))
     localStorage.setItem("shogiRecords", JSON.stringify(updatedRecords))
+  }
+
+  const handleAuthentication = () => {
+    setIsAuthenticated(true)
+
+    // Load records from localStorage
+    const storedRecords = localStorage.getItem("shogiRecords")
+    if (storedRecords) {
+      const parsedRecords: GameRecord[] = JSON.parse(storedRecords)
+      setRecords(parsedRecords)
+      setFilteredRecords(parsedRecords)
+    }
+  }
+
+  if (!isAuthenticated) {
+    return <PasswordProtection onAuthenticated={handleAuthentication} />
   }
 
   return (

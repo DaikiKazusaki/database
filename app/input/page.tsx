@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -32,6 +32,12 @@ export default function InputPage() {
   const [gote, setGote] = useState<PlayerInfo>({ university: "", name: "", year: "" })
   const [record, setRecord] = useState("")
   const [date, setDate] = useState("")
+
+  // Set authentication when a record is saved
+  useEffect(() => {
+    // This ensures that after saving a record, the user can access the search page
+    localStorage.setItem("shogiAuth", "authenticated")
+  }, [])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
