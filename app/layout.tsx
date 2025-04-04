@@ -7,7 +7,7 @@ import Link from "next/link"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "将棋棋譜データベース",
+  title: "大阪大学将棋部棋譜データベース",
   description: "大学将棋の棋譜データベース",
 }
 

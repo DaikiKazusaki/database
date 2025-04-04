@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 export default function Home() {
   return (
     <div className="container mx-auto py-10 px-4">
-      <h1 className="text-4xl font-bold text-center mb-10">将棋棋譜データベース</h1>
+      <h1 className="text-4xl font-bold text-center mb-10">大阪大学将棋部棋譜データベース</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
         <Card>
