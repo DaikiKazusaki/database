@@ -23,6 +23,7 @@ interface GameRecord {
   gote: PlayerInfo
   record: string
   date: string
+  tournament: string
   id: string
 }
 
@@ -32,6 +33,7 @@ export default function InputPage() {
   const [gote, setGote] = useState<PlayerInfo>({ university: "", name: "", year: "" })
   const [record, setRecord] = useState("")
   const [date, setDate] = useState("")
+  const [tournament, setTournament] = useState("")
 
   // Set authentication when a record is saved
   useEffect(() => {
@@ -51,7 +53,8 @@ export default function InputPage() {
       !gote.name ||
       !gote.year ||
       !record ||
-      !date
+      !date ||
+      !tournament
     ) {
       toast({
         title: "入力エラー",
@@ -62,7 +65,7 @@ export default function InputPage() {
     }
 
     // Create unique ID based on player info and date
-    const id = `${date}_${sente.university}_${sente.name}_vs_${gote.university}_${gote.name}`
+    const id = `${date}_${tournament}_${sente.university}_${sente.name}_vs_${gote.university}_${gote.name}`
 
     // Create game record object
     const gameRecord: GameRecord = {
@@ -70,6 +73,7 @@ export default function InputPage() {
       gote,
       record,
       date,
+      tournament,
       id,
     }
 
@@ -93,6 +97,7 @@ export default function InputPage() {
     setGote({ university: "", name: "", year: "" })
     setRecord("")
     setDate("")
+    setTournament("")
 
     // Redirect to search page after short delay
     setTimeout(() => {
@@ -172,9 +177,15 @@ export default function InputPage() {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="date">対局日</Label>
-              <Input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="tournament">大会名</Label>
+                <Input id="tournament" value={tournament} onChange={(e) => setTournament(e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="date">対局日</Label>
+                <Input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+              </div>
             </div>
 
             <div className="space-y-2">
