@@ -2,7 +2,8 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
-import Link from "next/link"
+import Header from "./components/header"
+import Footer from "./components/footer"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -19,22 +20,11 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body className={inter.className}>
-        <header className="border-b">
-          <div className="container mx-auto py-4 px-4">
-            <nav className="flex gap-6">
-              <Link href="/" className="font-medium hover:underline">
-                ホーム
-              </Link>
-              <Link href="/input" className="font-medium hover:underline">
-                棋譜入力
-              </Link>
-              <Link href="/search" className="font-medium hover:underline">
-                棋譜検索
-              </Link>
-            </nav>
-          </div>
-        </header>
-        <main>{children}</main>
+        <div className="flex flex-col min-h-screen">
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </div>
       </body>
     </html>
   )
