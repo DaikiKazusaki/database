@@ -22,7 +22,7 @@ export default function Footer() {
           </a>
         </div>
         <div className="text-sm text-muted-foreground flex justify-center items-center mt-2">
-          This site is created by Daiki Kazusaki.
+          This web-site is created by Daiki Kazusaki.
         </div>
       </div>
     </footer>
