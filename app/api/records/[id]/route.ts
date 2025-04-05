@@ -18,9 +18,9 @@ interface GameRecord {
 }
 
 // 特定のIDの棋譜を取得するAPI
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, context: { params: { id: string } }) {
   try {
-    const id = params.id
+    const id = context.params.id
 
     // 全ての棋譜を取得
     const records = (await redis.get("shogiRecords")) as GameRecord[] | null
@@ -42,4 +42,3 @@ export async function GET(request: Request, { params }: { params: { id: string }
     return NextResponse.json({ error: "Failed to fetch record" }, { status: 500 })
   }
 }
-
