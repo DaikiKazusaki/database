@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -34,17 +34,13 @@ export default function InputPage() {
   const [record, setRecord] = useState("")
   const [date, setDate] = useState("")
   const [tournament, setTournament] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // Set authentication when a record is saved
-  useEffect(() => {
-    // This ensures that after saving a record, the user can access the search page
-    localStorage.setItem("shogiAuth", "authenticated")
-  }, [])
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setIsSubmitting(true)
 
-    // Validation
+    // バリデーション
     if (
       !sente.university ||
       !sente.name ||
@@ -61,13 +57,14 @@ export default function InputPage() {
         description: "すべての項目を入力してください",
         variant: "destructive",
       })
+      setIsSubmitting(false)
       return
     }
 
-    // Create unique ID based on player info and date
+    // ユニークIDの作成
     const id = `${date}_${tournament}_${sente.university}_${sente.name}_vs_${gote.university}_${gote.name}`
 
-    // Create game record object
+    // 棋譜オブジェクトの作成
     const gameRecord: GameRecord = {
       sente,
       gote,
@@ -77,32 +74,48 @@ export default function InputPage() {
       id,
     }
 
-    // Get existing records from localStorage
-    const existingRecords = localStorage.getItem("shogiRecords")
-    const records: GameRecord[] = existingRecords ? JSON.parse(existingRecords) : []
+    try {
+      // APIを使用して棋譜を保存
+      const response = await fetch("/api/records", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(gameRecord),
+      })
 
-    // Add new record
-    records.push(gameRecord)
+      const data = await response.json()
 
-    // Save to localStorage
-    localStorage.setItem("shogiRecords", JSON.stringify(records))
+      if (!response.ok) {
+        throw new Error(data.error || "棋譜の保存に失敗しました")
+      }
 
-    toast({
-      title: "保存完了",
-      description: "棋譜が正常に保存されました",
-    })
+      toast({
+        title: "保存完了",
+        description: "棋譜が正常に保存されました",
+      })
 
-    // Reset form
-    setSente({ university: "", name: "", year: "" })
-    setGote({ university: "", name: "", year: "" })
-    setRecord("")
-    setDate("")
-    setTournament("")
+      // フォームのリセット
+      setSente({ university: "", name: "", year: "" })
+      setGote({ university: "", name: "", year: "" })
+      setRecord("")
+      setDate("")
+      setTournament("")
 
-    // Redirect to search page after short delay
-    setTimeout(() => {
-      router.push("/search")
-    }, 1500)
+      // 検索ページへリダイレクト
+      setTimeout(() => {
+        router.push("/search")
+      }, 1500)
+    } catch (error) {
+      console.error("Error saving record:", error)
+      toast({
+        title: "エラー",
+        description: "棋譜の保存に失敗しました。もう一度お試しください。",
+        variant: "destructive",
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -201,8 +214,8 @@ export default function InputPage() {
           </CardContent>
 
           <CardFooter>
-            <Button type="submit" className="w-full">
-              棋譜を保存
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting ? "保存中..." : "棋譜を保存"}
             </Button>
           </CardFooter>
         </form>
