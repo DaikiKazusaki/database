@@ -16,19 +16,19 @@ import { toast } from "@/components/ui/use-toast"
 
 const formSchema = z.object({
   sente: z.object({
-    name: z.string().min(1, { message: "先手の名前を入力してください" }),
-    university: z.string().min(1, { message: "先手の大学を入力してください" }),
-    grade: z.string().min(1, { message: "先手の学年を入力してください" }),
+    name: z.string(),
+    university: z.string(),
+    grade: z.string(),
   }),
   gote: z.object({
-    name: z.string().min(1, { message: "後手の名前を入力してください" }),
-    university: z.string().min(1, { message: "後手の大学を入力してください" }),
-    grade: z.string().min(1, { message: "後手の学年を入力してください" }),
+    name: z.string(),
+    university: z.string(),
+    grade: z.string(),
   }),
-  tournament: z.string().min(1, { message: "大会名を入力してください" }),
-  date: z.string().min(1, { message: "対局日を入力してください" }),
+  tournament: z.string(),
+  date: z.string(),
   result: z.enum(["先手勝ち", "後手勝ち", "千日手", "持将棋", "中断"] as const),
-  kifu: z.string().min(1, { message: "棋譜を入力してください" }),
+  kifu: z.string(),
 })
 
 export default function InputPage() {
@@ -90,7 +90,7 @@ export default function InputPage() {
                       <FormItem>
                         <FormLabel>名前</FormLabel>
                         <FormControl>
-                          <Input placeholder="例: 佐藤太郎" {...field} />
+                          <Input {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -103,7 +103,7 @@ export default function InputPage() {
                       <FormItem>
                         <FormLabel>大学</FormLabel>
                         <FormControl>
-                          <Input placeholder="例: 東京大学" {...field} />
+                          <Input {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -116,7 +116,7 @@ export default function InputPage() {
                       <FormItem>
                         <FormLabel>学年</FormLabel>
                         <FormControl>
-                          <Input placeholder="例: 3年" {...field} />
+                          <Input {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -134,7 +134,7 @@ export default function InputPage() {
                       <FormItem>
                         <FormLabel>名前</FormLabel>
                         <FormControl>
-                          <Input placeholder="例: 鈴木次郎" {...field} />
+                          <Input {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -147,7 +147,7 @@ export default function InputPage() {
                       <FormItem>
                         <FormLabel>大学</FormLabel>
                         <FormControl>
-                          <Input placeholder="例: 京都大学" {...field} />
+                          <Input {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -160,7 +160,7 @@ export default function InputPage() {
                       <FormItem>
                         <FormLabel>学年</FormLabel>
                         <FormControl>
-                          <Input placeholder="例: 2年" {...field} />
+                          <Input {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -178,7 +178,7 @@ export default function InputPage() {
                     <FormItem>
                       <FormLabel>大会名</FormLabel>
                       <FormControl>
-                        <Input placeholder="例: 全日本大学対抗戦" {...field} />
+                        <Input {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -231,11 +231,7 @@ export default function InputPage() {
                   <FormItem>
                     <FormLabel>棋譜</FormLabel>
                     <FormControl>
-                      <Textarea
-                        placeholder="例: ▲７六歩 △３四歩 ▲２六歩 △８四歩..."
-                        className="min-h-[200px]"
-                        {...field}
-                      />
+                      <Textarea className="min-h-[200px]" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
