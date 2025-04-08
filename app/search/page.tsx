@@ -40,28 +40,26 @@ export default function SearchPage() {
     fetchRecords()
   }, [])
 
-  useEffect(() => {
-    if (searchTerm.trim() === "") {
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+
+    const term = searchTerm.trim().toLowerCase()
+
+    if (term === "") {
       setFilteredRecords(records)
       return
     }
 
-    const term = searchTerm.toLowerCase()
     const filtered = records.filter(
       (record) =>
         record.sente.name.toLowerCase().includes(term) ||
         record.gote.name.toLowerCase().includes(term) ||
         record.tournament.toLowerCase().includes(term) ||
         record.sente.university.toLowerCase().includes(term) ||
-        record.gote.university.toLowerCase().includes(term),
+        record.gote.university.toLowerCase().includes(term)
     )
 
     setFilteredRecords(filtered)
-  }, [searchTerm, records])
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Search is already handled by the useEffect
   }
 
   const handleCopyKifu = (kifu: string) => {
@@ -83,6 +81,7 @@ export default function SearchPage() {
 
       if (success) {
         setRecords((prev) => prev.filter((record) => record.id !== id))
+        setFilteredRecords((prev) => prev.filter((record) => record.id !== id))
         toast({
           title: "削除完了",
           description: "棋譜が正常に削除されました",
