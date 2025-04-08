@@ -4,7 +4,7 @@ export default function Footer() {
   return (
     <footer className="py-6 border-t">
       <div className="container mx-auto px-4 text-center text-sm text-gray-500 space-y-2">
-        <p>&copy; {new Date().getFullYear()} 大阪大学将棋部データべース. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} 大阪大学将棋部 All rights reserved.</p>
         <div className="flex justify-center">
           <a
             href="https://github.com/DaikiKazusaki/database"
