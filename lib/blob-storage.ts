@@ -15,6 +15,7 @@ export async function saveGameRecord(gameRecord: Omit<GameRecord, "id" | "create
   }
 
   const blob = await put(`kifu-${id}.json`, JSON.stringify(record), {
+    access: "public", // 必須のプロパティ
     contentType: "application/json",
   })
 
