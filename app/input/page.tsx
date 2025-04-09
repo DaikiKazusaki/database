@@ -70,19 +70,19 @@ export default function InputPage() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto">
-      <Card>
-        <CardHeader>
+    <div className="max-w-3xl mx-auto p-4 bg-gray-100 min-h-screen">
+      <Card className="bg-white shadow-md">
+        <CardHeader className="bg-gray-50 border-b">
           <CardTitle>棋譜入力</CardTitle>
           <CardDescription>対局情報と棋譜を入力してください</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* 先手情報 */}
-                <div className="space-y-4">
-                  <h3 className="font-medium">先手</h3>
+              {/* 先手情報 - 横並び */}
+              <div className="space-y-2">
+                <h3 className="font-medium">先手</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <FormField
                     control={form.control}
                     name="sente.name"
@@ -123,10 +123,12 @@ export default function InputPage() {
                     )}
                   />
                 </div>
+              </div>
 
-                {/* 後手情報 */}
-                <div className="space-y-4">
-                  <h3 className="font-medium">後手</h3>
+              {/* 後手情報 - 横並び */}
+              <div className="space-y-2">
+                <h3 className="font-medium">後手</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <FormField
                     control={form.control}
                     name="gote.name"
@@ -169,8 +171,8 @@ export default function InputPage() {
                 </div>
               </div>
 
-              {/* 対局情報 */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* 対局情報 - 横並び1行 */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <FormField
                   control={form.control}
                   name="tournament"
@@ -197,32 +199,31 @@ export default function InputPage() {
                     </FormItem>
                   )}
                 />
+                <FormField
+                  control={form.control}
+                  name="result"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>勝敗</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="bg-white">
+                            <SelectValue placeholder="勝敗を選択" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="先手勝ち">先手勝ち</SelectItem>
+                          <SelectItem value="後手勝ち">後手勝ち</SelectItem>
+                          <SelectItem value="千日手">千日手</SelectItem>
+                          <SelectItem value="持将棋">持将棋</SelectItem>
+                          <SelectItem value="中断">中断</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
-
-              <FormField
-                control={form.control}
-                name="result"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>勝敗</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="勝敗を選択" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="先手勝ち">先手勝ち</SelectItem>
-                        <SelectItem value="後手勝ち">後手勝ち</SelectItem>
-                        <SelectItem value="千日手">千日手</SelectItem>
-                        <SelectItem value="持将棋">持将棋</SelectItem>
-                        <SelectItem value="中断">中断</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
 
               <FormField
                 control={form.control}
