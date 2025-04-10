@@ -232,7 +232,7 @@ export default function InputPage() {
                   <FormItem>
                     <FormLabel>棋譜</FormLabel>
                     <FormControl>
-                      <Textarea className="min-h-[200px]" {...field} />
+                      <Textarea className="min-h-[200px] max-h-[400px] overflow-y-auto resize-y" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
