@@ -16,7 +16,7 @@ export default function ClientProvider({
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
       timeoutRef.current = setTimeout(() => {
         router.push("/");
-      }, 30 * 60 * 1000); // 30分
+      }, 1 * 60 * 1000);
     };
 
     const events = ["mousemove", "keydown", "click", "scroll", "touchstart"];
