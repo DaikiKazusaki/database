@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function ClientProvider({
   children,
@@ -11,15 +11,24 @@ export default function ClientProvider({
   const router = useRouter();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  // ページリロード時にトップへリダイレクト
+  useEffect(() => {
+    const navEntry = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+    if (navEntry?.type === 'reload') {
+      router.push('/');
+    }
+  }, [router]);
+
+  // 非アクティブ時の自動リダイレクト（30分）
   useEffect(() => {
     const resetTimeout = () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
       timeoutRef.current = setTimeout(() => {
-        router.push("/");
-      }, 30 * 60 * 1000); // 30分間の非アクティブでログアウト
+        router.push('/');
+      }, 30 * 60 * 1000); // 30分
     };
 
-    const events = ["mousemove", "keydown", "click", "scroll", "touchstart"];
+    const events = ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'];
     events.forEach((event) => window.addEventListener(event, resetTimeout));
     resetTimeout();
 
