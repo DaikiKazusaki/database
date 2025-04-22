@@ -44,9 +44,9 @@ export default function Page() {
       <div>
         <label className="block font-semibold mb-1">先手</label>
         <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0">
-          <input type="text" name="sente_name" className="border p-2 w-full rounded" placeholder="氏名" />
-          <input type="text" name="sente_univ" className="border p-2 w-full rounded" placeholder="大学名" />
-          <input type="text" name="sente_grade" className="border p-2 w-full rounded" placeholder="学年" />
+          <input type="text" name="sente_name" required className="border p-2 w-full rounded" placeholder="氏名" />
+          <input type="text" name="sente_univ" required className="border p-2 w-full rounded" placeholder="大学名" />
+          <input type="text" name="sente_grade" required className="border p-2 w-full rounded" placeholder="学年" />
         </div>
       </div>
 
@@ -54,9 +54,9 @@ export default function Page() {
       <div>
         <label className="block font-semibold mb-1">後手</label>
         <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0">
-          <input type="text" name="gote_name" className="border p-2 w-full rounded" placeholder="氏名" />
-          <input type="text" name="gote_univ" className="border p-2 w-full rounded" placeholder="大学名" />
-          <input type="text" name="gote_grade" className="border p-2 w-full rounded" placeholder="学年" />
+          <input type="text" name="gote_name" required className="border p-2 w-full rounded" placeholder="氏名" />
+          <input type="text" name="gote_univ" required className="border p-2 w-full rounded" placeholder="大学名" />
+          <input type="text" name="gote_grade" required className="border p-2 w-full rounded" placeholder="学年" />
         </div>
       </div>
 
@@ -64,9 +64,10 @@ export default function Page() {
       <div>
         <label className="block font-semibold mb-1">大会情報</label>
         <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0">
-          <input type="text" name="event" className="border p-2 w-full rounded" />
-          <input type="date" name="date" className="border p-2 w-full rounded" />
-          <select name="result" className="border p-2 w-full rounded">
+          <input type="text" name="event" required className="border p-2 w-full rounded" />
+          <input type="date" name="date" required className="border p-2 w-full rounded" />
+          <select name="result" required className="border p-2 w-full rounded">
+            <option value="">結果を選択</option>
             <option value="先手勝ち">先手勝ち</option>
             <option value="後手勝ち">後手勝ち</option>
           </select>
@@ -79,6 +80,7 @@ export default function Page() {
         <textarea
           name="kifu"
           id="kifu"
+          required
           className="border p-2 w-full h-40 rounded resize-none overflow-auto"
         ></textarea>
       </div>
