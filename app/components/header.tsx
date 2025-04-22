@@ -44,12 +44,22 @@ export default function Header() {
             menuOpen ? 'translate-x-0' : 'translate-x-full'
           } md:hidden shadow-lg z-40`}
         >
-          <div className="p-4 flex flex-col space-y-4 pt-16">
-            <Link href="/home" onClick={() => setMenuOpen(false)} className="block py-2">ホーム</Link>
-            <hr className="border-white" />
-            <Link href="/input" onClick={() => setMenuOpen(false)} className="block py-2">棋譜入力</Link>
-            <hr className="border-white" />
-            <Link href="/search" onClick={() => setMenuOpen(false)} className="block py-2">棋譜検索</Link>
+          <div className="p-4 pt-6 flex flex-col space-y-4 h-full relative">
+            <button
+              onClick={() => setMenuOpen(false)}
+              aria-label="メニューを閉じる"
+              className="absolute top-4 right-4"
+            >
+              <X size={24} />
+            </button>
+
+            <div className="mt-12 flex flex-col space-y-4">
+              <Link href="/home" onClick={() => setMenuOpen(false)} className="block py-2">ホーム</Link>
+              <hr className="border-white" />
+              <Link href="/input" onClick={() => setMenuOpen(false)} className="block py-2">棋譜入力</Link>
+              <hr className="border-white" />
+              <Link href="/search" onClick={() => setMenuOpen(false)} className="block py-2">棋譜検索</Link>
+            </div>
           </div>
         </div>
       )}
