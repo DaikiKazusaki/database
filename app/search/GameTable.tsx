@@ -18,6 +18,7 @@ type Game = {
 
 export default function GameTable({ games }: { games: Game[] }) {
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
+  const [gameList, setGameList] = useState(games);
 
   const handleCopy = async (kifu: string) => {
     try {
@@ -28,11 +29,31 @@ export default function GameTable({ games }: { games: Game[] }) {
     }
   };
 
+  const handleDelete = async (id: number) => {
+    if (!confirm('この棋譜を削除しますか？')) return;
+    try {
+      const res = await fetch('/api/delete-game', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setGameList((prev) => prev.filter((g) => g.id !== id));
+        alert('棋譜を削除しました');
+      } else {
+        alert('削除に失敗しました');
+      }
+    } catch {
+      alert('エラーが発生しました');
+    }
+  };
+
   return (
     <main className="p-6 max-w-6xl mx-auto">
       <h1 className="text-2xl font-bold text-center mb-6">棋譜一覧</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {games.map((game) => (
+        {gameList.map((game) => (
           <div
             key={game.id}
             className="bg-white shadow rounded-xl p-4 border border-gray-200 flex flex-col justify-between h-full"
@@ -44,19 +65,16 @@ export default function GameTable({ games }: { games: Game[] }) {
                 </div>
               </div>
               <div className="text-sm mb-1">
-                <strong>先手：</strong>
-                {game.sente_name}（{game.sente_univ}・{game.sente_grade}）
+                <strong>先手：</strong>{game.sente_name}（{game.sente_univ}・{game.sente_grade}）
               </div>
               <div className="text-sm">
-                <strong>後手：</strong>
-                {game.gote_name}（{game.gote_univ}・{game.gote_grade}）
+                <strong>後手：</strong>{game.gote_name}（{game.gote_univ}・{game.gote_grade}）
               </div>
             </div>
 
             <div className="flex justify-between items-center mt-4">
               <div className="text-sm text-gray-700">
-                <strong>結果：</strong>
-                {game.result}
+                <strong>結果：</strong>{game.result}
               </div>
               <div className="flex gap-2">
                 <button
@@ -70,6 +88,12 @@ export default function GameTable({ games }: { games: Game[] }) {
                   className="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 text-sm"
                 >
                   棋譜表示
+                </button>
+                <button
+                  onClick={() => handleDelete(game.id)}
+                  className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
+                >
+                  削除
                 </button>
               </div>
             </div>
