@@ -3,7 +3,7 @@ import { FaGithub } from "react-icons/fa6";
 
 export default function Footer() {
   return (
-    <footer className="w-full border-t border-gray-200 dark:border-gray-700 mt-16 py-8 px-6 flex flex-col items-center justify-center text-sm text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-900 space-y-4">
+    <footer className="w-full border-t border-blue-700 mt-16 py-8 px-6 flex flex-col items-center justify-center text-sm text-white bg-blue-900 space-y-4">
 
       {/* 著作権表示 */}
       <p className="text-center text-base font-medium">
@@ -14,7 +14,7 @@ export default function Footer() {
       <div className="flex space-x-4">
         <Link
           href="https://github.com/DaikiKazusaki/database"
-          className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors duration-200"
+          className="text-white hover:text-blue-300 transition-colors duration-200"
           aria-label="GitHub Repository"
         >
           <FaGithub size={24} />
@@ -22,7 +22,7 @@ export default function Footer() {
       </div>
 
       {/* 開発者クレジット */}
-      <p className=" text-gray-500 dark:text-gray-500 text-center">
+      <p className="text-white text-center opacity-80">
         This website is developed by Daiki Kazusaki.
       </p>
     </footer>
