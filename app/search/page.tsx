@@ -1,4 +1,11 @@
 import { neon } from '@neondatabase/serverless';
+import GameTable from './GameTable';
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "棋譜検索",
+  description: "大阪大学将棋部によるWeb棋譜データベース",
+};
 
 type Game = {
   id: number;
@@ -27,43 +34,5 @@ export default async function SearchPage() {
   `;
   const games: Game[] = rawGames.map(row => row as Game);
 
-  return (
-    <main className="p-6 max-w-6xl mx-auto">
-      <h1 className="text-2xl font-bold text-center mb-6">棋譜一覧</h1>
-      <div className="overflow-x-auto">
-        <table className="min-w-full border border-gray-300 bg-white">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="border px-3 py-2 text-left">対局日</th>
-              <th className="border px-3 py-2 text-left">大会名</th>
-              <th className="border px-3 py-2 text-left">先手</th>
-              <th className="border px-3 py-2 text-left">後手</th>
-              <th className="border px-3 py-2 text-left">結果</th>
-              <th className="border px-3 py-2 text-left">棋譜</th>
-            </tr>
-          </thead>
-          <tbody>
-            {games.map((game: Game) => (
-              <tr key={game.id} className="hover:bg-gray-50">
-                <td className="border px-3 py-2">
-                  {new Date(game.date).toLocaleDateString('ja-JP')}
-                </td>
-                <td className="border px-3 py-2">{game.event}</td>
-                <td className="border px-3 py-2">
-                  {game.sente_name}（{game.sente_univ}・{game.sente_grade}）
-                </td>
-                <td className="border px-3 py-2">
-                  {game.gote_name}（{game.gote_univ}・{game.gote_grade}）
-                </td>
-                <td className="border px-3 py-2">{game.result}</td>
-                <td className="border px-3 py-2 whitespace-pre-wrap break-words max-w-xs">
-                  {game.kifu}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </main>
-  );
+  return <GameTable games={games} />;
 }
