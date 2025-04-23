@@ -70,6 +70,9 @@ export default function Page() {
             <option value="">結果を選択</option>
             <option value="先手勝ち">先手勝ち</option>
             <option value="後手勝ち">後手勝ち</option>
+            <option value="引き分け">千日手</option>
+            <option value="先手宣言勝ち">先手宣言勝ち</option>
+            <option value="後手宣言勝ち">後手宣言勝ち</option>
           </select>
         </div>
       </div>
