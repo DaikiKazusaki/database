@@ -56,48 +56,48 @@ export default function GameTable({ games }: { games: Game[] }) {
         {gameList.map((game) => (
           <div
             key={game.id}
-            className="bg-white shadow rounded-xl p-4 border border-gray-200 flex flex-col justify-between h-full"
+            className="bg-white shadow rounded-xl p-4 border border-gray-200 flex flex-col"
           >
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <div className="text-sm text-gray-600">
+            <div className="flex justify-between gap-4">
+              {/* 左側：対局情報 */}
+              <div className="flex-1">
+                <div className="text-sm text-gray-600 mb-2">
                   {new Date(game.date).toLocaleDateString('ja-JP')}・{game.event}
                 </div>
+                <div className="text-sm mb-1">
+                  <strong>先手：</strong>{game.sente_name}（{game.sente_univ}・{game.sente_grade}）
+                </div>
+                <div className="text-sm mb-1">
+                  <strong>後手：</strong>{game.gote_name}（{game.gote_univ}・{game.gote_grade}）
+                </div>
+                <div className="text-sm text-gray-700">
+                  <strong>結果：</strong>{game.result}
+                </div>
               </div>
-              <div className="text-sm mb-1">
-                <strong>先手：</strong>{game.sente_name}（{game.sente_univ}・{game.sente_grade}）
-              </div>
-              <div className="text-sm">
-                <strong>後手：</strong>{game.gote_name}（{game.gote_univ}・{game.gote_grade}）
-              </div>
-            </div>
-
-            <div className="flex justify-between items-center mt-4">
-              <div className="text-sm text-gray-700">
-                <strong>結果：</strong>{game.result}
-              </div>
-              <div className="flex gap-2">
+          
+              {/* 右側：ボタン */}
+              <div className="flex flex-col items-end gap-2 w-[100px]">
                 <button
                   onClick={() => handleCopy(game.kifu)}
-                  className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
+                  className="w-full px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
                 >
                   コピー
                 </button>
                 <button
                   onClick={() => setSelectedGame(game)}
-                  className="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 text-sm"
+                  className="w-full px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 text-sm"
                 >
                   棋譜表示
                 </button>
                 <button
                   onClick={() => handleDelete(game.id)}
-                  className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
+                  className="w-full px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
                 >
                   削除
                 </button>
               </div>
             </div>
-          </div>
+          </div>        
         ))}
       </div>
 
