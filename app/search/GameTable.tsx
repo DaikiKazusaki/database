@@ -58,7 +58,7 @@ export default function GameTable({ games }: { games: Game[] }) {
             key={game.id}
             className="bg-white shadow rounded-xl p-4 border border-gray-200 flex flex-col"
           >
-            <div className="flex justify-between gap-4">
+            <div className="flex flex-col md:flex-row justify-between gap-4">
               {/* 左側：対局情報 */}
               <div className="flex-1">
                 <div className="text-sm text-gray-600 mb-2">
@@ -74,30 +74,30 @@ export default function GameTable({ games }: { games: Game[] }) {
                   <strong>結果：</strong>{game.result}
                 </div>
               </div>
-          
-              {/* 右側：ボタン */}
-              <div className="flex flex-col items-end gap-2 w-[100px]">
+
+              {/* ボタン：スマホは下部横並び，PCは右上縦並び */}
+              <div className="flex flex-row md:flex-col gap-2 mt-4 md:mt-0 md:items-end w-full md:w-auto">
                 <button
                   onClick={() => handleCopy(game.kifu)}
-                  className="w-full px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
+                  className="w-full md:w-[100px] px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
                 >
                   コピー
                 </button>
                 <button
                   onClick={() => setSelectedGame(game)}
-                  className="w-full px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 text-sm"
+                  className="w-full md:w-[100px] px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 text-sm"
                 >
                   棋譜表示
                 </button>
                 <button
                   onClick={() => handleDelete(game.id)}
-                  className="w-full px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
+                  className="w-full md:w-[100px] px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
                 >
                   削除
                 </button>
               </div>
             </div>
-          </div>        
+          </div>
         ))}
       </div>
 
