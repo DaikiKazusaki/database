@@ -19,9 +19,10 @@ type Game = {
 export default function GameTable({ games }: { games: Game[] }) {
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
 
   const filteredGames = games.filter((game) => {
-    const query = searchQuery.toLowerCase();
+    const query = searchTerm.toLowerCase();
     return (
       game.sente_name.toLowerCase().includes(query) ||
       game.sente_univ.toLowerCase().includes(query) ||
@@ -34,7 +35,10 @@ export default function GameTable({ games }: { games: Game[] }) {
       game.result.toLowerCase().includes(query)
     );
   });
-  
+
+  const handleSearch = () => {
+    setSearchTerm(searchQuery);
+  };
 
   const handleCopy = async (kifu: string) => {
     try {
@@ -68,8 +72,8 @@ export default function GameTable({ games }: { games: Game[] }) {
     <main className="p-6 max-w-6xl mx-auto">
       <h1 className="text-2xl font-bold text-center mb-6">棋譜一覧</h1>
 
-      {/* 検索ボックス */}
-      <div className="mb-6">
+      {/* 🔍 検索エリア */}
+      <div className="mb-6 flex flex-col md:flex-row gap-2 items-stretch">
         <input
           type="text"
           placeholder="名前、大学、大会名などで検索"
@@ -77,6 +81,12 @@ export default function GameTable({ games }: { games: Game[] }) {
           onChange={(e) => setSearchQuery(e.target.value)}
           className="w-full p-2 border border-gray-300 rounded"
         />
+        <button
+          onClick={handleSearch}
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          検索
+        </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -91,13 +101,16 @@ export default function GameTable({ games }: { games: Game[] }) {
                   {new Date(game.date).toLocaleDateString('ja-JP')}・{game.event}
                 </div>
                 <div className="text-sm mb-1">
-                  <strong>先手：</strong>{game.sente_name}（{game.sente_univ}・{game.sente_grade}）
+                  <strong>先手：</strong>
+                  {game.sente_name}（{game.sente_univ}・{game.sente_grade}）
                 </div>
                 <div className="text-sm mb-1">
-                  <strong>後手：</strong>{game.gote_name}（{game.gote_univ}・{game.gote_grade}）
+                  <strong>後手：</strong>
+                  {game.gote_name}（{game.gote_univ}・{game.gote_grade}）
                 </div>
                 <div className="text-sm text-gray-700">
-                  <strong>結果：</strong>{game.result}
+                  <strong>結果：</strong>
+                  {game.result}
                 </div>
               </div>
 
