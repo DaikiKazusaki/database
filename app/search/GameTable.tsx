@@ -155,7 +155,7 @@ export default function GameTable({ games }: { games: Game[] }) {
                   onClick={() => setSelectedGame(game)}
                   className="w-full md:w-[100px] px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 text-sm"
                 >
-                  棋譜表示
+                  棋譜再生
                 </button>
                 <button
                   onClick={() => handleDelete(game.id)}
@@ -175,9 +175,9 @@ export default function GameTable({ games }: { games: Game[] }) {
           <div className="bg-white rounded-xl shadow-lg max-w-2xl w-full p-6 relative">
             <button
               onClick={() => setSelectedGame(null)}
-              className="absolute top-2 right-3 text-gray-500 hover:text-gray-800 text-xl"
+              className="absolute top-2 right-3 text-gray-600 hover:text-red-600 text-3xl font-bold leading-none"
             >
-              ×
+              ✕
             </button>
             <h2 className="text-lg font-bold mb-4">棋譜再生</h2>
             <div className="relative overflow-hidden" style={{ height: '80vh' }}>
@@ -209,9 +209,11 @@ export default function GameTable({ games }: { games: Game[] }) {
                 <body>
                   <div class="container">
                     <shogi-player-wc
+                      id="player"
                       sp_controller="true"
                       sp_piece_variant="paper"
                       sp_coordinate="true"
+                      sp_autoplay="false"
                       sp_player_info='{
                         "black": {
                           "name": "${(selectedGame.sente_name + '（' + selectedGame.sente_univ + '・' + selectedGame.sente_grade + '）').replace(/"/g, '&quot;')}"
@@ -220,17 +222,25 @@ export default function GameTable({ games }: { games: Game[] }) {
                           "name": "${(selectedGame.gote_name + '（' + selectedGame.gote_univ + '・' + selectedGame.gote_grade + '）').replace(/"/g, '&quot;')}"
                         }
                       }'
-                      sp_body="${(selectedGame.kifu).replace(/"/g, '&quot;')}"
+                      sp_body="${(selectedGame.kifu || '手合割：平手\\n先手：先手\\n後手：後手\\n1 ７六歩(77)').replace(/"/g, '&quot;')}"
                     ></shogi-player-wc>
                   </div>
+                  <script>
+                    window.addEventListener('DOMContentLoaded', () => {
+                      const player = document.getElementById('player');
+                      if (player) {
+                        player.move(0); // 初期局面に戻す
+                      }
+                    });
+                  </script>
                 </body>
                 </html>
               `}
-              sandbox="allow-scripts"
-              width="100%"
-              height="100%"
-              className="border rounded"
-            />
+            sandbox="allow-scripts"
+            width="100%"
+            height="100%"
+            className="border rounded"
+          />
             </div>
           </div>
         </div>
