@@ -37,7 +37,6 @@ export default function GameTable({ games }: { games: Game[] }) {
     const inDateRange =
       (!startSearchDate || new Date(startSearchDate) <= gameDate) &&
       (!endSearchDate || gameDate <= new Date(endSearchDate));
-
     const matchesQuery =
       game.sente_name.toLowerCase().includes(query) ||
       game.sente_univ.toLowerCase().includes(query) ||
@@ -47,7 +46,6 @@ export default function GameTable({ games }: { games: Game[] }) {
       game.gote_grade.toLowerCase().includes(query) ||
       game.event.toLowerCase().includes(query) ||
       game.result.toLowerCase().includes(query);
-
     return inDateRange && matchesQuery;
   });
 
@@ -85,7 +83,7 @@ export default function GameTable({ games }: { games: Game[] }) {
 
       {/* 検索エリア */}
       <div className="mb-6 flex flex-col sm:flex-row sm:items-end sm:gap-4">
-        {/* 日付入力（1行） */}
+        {/* 日付入力 */}
         <div className="flex flex-wrap items-center gap-2 mb-2 sm:mb-0">
           <input
             type="date"
@@ -102,7 +100,7 @@ export default function GameTable({ games }: { games: Game[] }) {
           />
         </div>
 
-        {/* 検索ボックス＋ボタン（1行） */}
+        {/* 検索ボックス */}
         <div className="flex gap-2 flex-col sm:flex-row flex-1">
           <input
             type="text"
@@ -171,6 +169,7 @@ export default function GameTable({ games }: { games: Game[] }) {
         ))}
       </div>
 
+      {/* 棋譜再生 */}
       {selectedGame && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl shadow-lg max-w-2xl w-full p-6 relative">
@@ -180,10 +179,52 @@ export default function GameTable({ games }: { games: Game[] }) {
             >
               ×
             </button>
-            <h2 className="text-lg font-bold mb-4">棋譜</h2>
-            <pre className="whitespace-pre-wrap break-words max-h-[70vh] overflow-y-auto bg-gray-50 p-4 rounded border border-gray-200">
-              {selectedGame.kifu}
-            </pre>
+            <h2 className="text-lg font-bold mb-4">棋譜再生</h2>
+            <div className="relative overflow-hidden" style={{ height: '80vh' }}>
+            <iframe
+              srcDoc={`
+                <!DOCTYPE html>
+                <html lang="ja">
+                <head>
+                  <meta charset="UTF-8">
+                  <script defer src="https://cdn.jsdelivr.net/npm/shogi-player"></script>
+                  <style>
+                    body { margin: 0; }
+                    .container {
+                      display: flex;
+                      justify-content: center;
+                      align-items: center;
+                      min-height: 100vh;
+                      margin: 0 1rem;
+                    }
+                    shogi-player-wc {
+                      flex-basis: 100%;
+                    }
+                    shogi-player-wc::part(root) {
+                      font-family: serif;
+                      color: black;
+                    }
+                  </style>
+                </head>
+                <body>
+                  <div class="container">
+                    <shogi-player-wc
+                      sp_controller="true"
+                      sp_piece_variant="paper"
+                      sp_coordinate="true"
+                      sp_player_info='{"black":{"name":"先手"}, "white":{"name":"後手"}}'
+                      sp_body="${(selectedGame.kifu).replace(/"/g, '&quot;')}"
+                    ></shogi-player-wc>
+                  </div>
+                </body>
+                </html>
+              `}
+              sandbox="allow-scripts"
+              width="100%"
+              height="100%"
+              className="border rounded"
+            />
+            </div>
           </div>
         </div>
       )}
