@@ -18,7 +18,23 @@ type Game = {
 
 export default function GameTable({ games }: { games: Game[] }) {
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
-  const [gameList, setGameList] = useState(games);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredGames = games.filter((game) => {
+    const query = searchQuery.toLowerCase();
+    return (
+      game.sente_name.toLowerCase().includes(query) ||
+      game.sente_univ.toLowerCase().includes(query) ||
+      game.sente_grade.toLowerCase().includes(query) ||
+      game.gote_name.toLowerCase().includes(query) ||
+      game.gote_univ.toLowerCase().includes(query) ||
+      game.gote_grade.toLowerCase().includes(query) ||
+      game.event.toLowerCase().includes(query) ||
+      game.date.toString().toLowerCase().includes(query) ||
+      game.result.toLowerCase().includes(query)
+    );
+  });
+  
 
   const handleCopy = async (kifu: string) => {
     try {
@@ -39,7 +55,6 @@ export default function GameTable({ games }: { games: Game[] }) {
       });
       const data = await res.json();
       if (data.success) {
-        setGameList((prev) => prev.filter((g) => g.id !== id));
         alert('棋譜を削除しました');
       } else {
         alert('削除に失敗しました');
@@ -52,14 +67,25 @@ export default function GameTable({ games }: { games: Game[] }) {
   return (
     <main className="p-6 max-w-6xl mx-auto">
       <h1 className="text-2xl font-bold text-center mb-6">棋譜一覧</h1>
+
+      {/* 検索ボックス */}
+      <div className="mb-6">
+        <input
+          type="text"
+          placeholder="名前、大学、大会名などで検索"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full p-2 border border-gray-300 rounded"
+        />
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {gameList.map((game) => (
+        {filteredGames.map((game) => (
           <div
             key={game.id}
             className="bg-white shadow rounded-xl p-4 border border-gray-200 flex flex-col"
           >
             <div className="flex flex-col md:flex-row justify-between gap-4">
-              {/* 左側：対局情報 */}
               <div className="flex-1">
                 <div className="text-sm text-gray-600 mb-2">
                   {new Date(game.date).toLocaleDateString('ja-JP')}・{game.event}
@@ -75,7 +101,6 @@ export default function GameTable({ games }: { games: Game[] }) {
                 </div>
               </div>
 
-              {/* ボタン：スマホは下部横並び，PCは右上縦並び */}
               <div className="flex flex-row md:flex-col gap-2 mt-4 md:mt-0 md:items-end w-full md:w-auto">
                 <button
                   onClick={() => handleCopy(game.kifu)}
