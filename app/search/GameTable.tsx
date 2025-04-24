@@ -20,10 +20,21 @@ export default function GameTable({ games }: { games: Game[] }) {
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+
+  const handleSearch = () => {
+    setSearchTerm(searchQuery);
+  };
 
   const filteredGames = games.filter((game) => {
     const query = searchTerm.toLowerCase();
-    return (
+    const gameDate = new Date(game.date);
+    const inDateRange =
+      (!startDate || new Date(startDate) <= gameDate) &&
+      (!endDate || gameDate <= new Date(endDate));
+
+    const matchesQuery =
       game.sente_name.toLowerCase().includes(query) ||
       game.sente_univ.toLowerCase().includes(query) ||
       game.sente_grade.toLowerCase().includes(query) ||
@@ -31,14 +42,10 @@ export default function GameTable({ games }: { games: Game[] }) {
       game.gote_univ.toLowerCase().includes(query) ||
       game.gote_grade.toLowerCase().includes(query) ||
       game.event.toLowerCase().includes(query) ||
-      game.date.toString().toLowerCase().includes(query) ||
-      game.result.toLowerCase().includes(query)
-    );
-  });
+      game.result.toLowerCase().includes(query);
 
-  const handleSearch = () => {
-    setSearchTerm(searchQuery);
-  };
+    return inDateRange && matchesQuery;
+  });
 
   const handleCopy = async (kifu: string) => {
     try {
@@ -72,23 +79,39 @@ export default function GameTable({ games }: { games: Game[] }) {
     <main className="p-6 max-w-6xl mx-auto">
       <h1 className="text-2xl font-bold text-center mb-6">棋譜一覧</h1>
 
-      {/* 🔍 検索エリア */}
-      <div className="mb-6 flex flex-col md:flex-row gap-2 items-stretch">
+      {/* 検索エリア */}
+      <div className="mb-6 flex flex-col md:flex-row gap-2 items-end flex-wrap">
+        <div className="flex items-center gap-2">
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="p-2 border border-gray-300 rounded"
+          />
+          <span className="text-gray-700">～</span>
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            className="p-2 border border-gray-300 rounded"
+          />
+        </div>
         <input
           type="text"
           placeholder="名前、大学、大会名などで検索"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded"
+          className="flex-1 p-2 border border-gray-300 rounded min-w-[200px]"
         />
         <button
           onClick={handleSearch}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 whitespace-nowrap"
         >
           検索
         </button>
       </div>
 
+      {/* 棋譜一覧 */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {filteredGames.map((game) => (
           <div
