@@ -17,6 +17,7 @@ type Game = {
 };
 
 export default function GameTable({ games }: { games: Game[] }) {
+  const [gameList, setGameList] = useState<Game[]>(games);
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
@@ -31,7 +32,7 @@ export default function GameTable({ games }: { games: Game[] }) {
     setEndSearchDate(endDate);
   };
 
-  const filteredGames = games.filter((game) => {
+  const filteredGames = gameList.filter((game) => {
     const query = searchTerm.toLowerCase();
     const gameDate = new Date(game.date);
     const inDateRange =
@@ -69,6 +70,7 @@ export default function GameTable({ games }: { games: Game[] }) {
       const data = await res.json();
       if (data.success) {
         alert('棋譜を削除しました');
+        setGameList((prev) => prev.filter((g) => g.id !== id));
       } else {
         alert('削除に失敗しました');
       }
@@ -83,7 +85,6 @@ export default function GameTable({ games }: { games: Game[] }) {
 
       {/* 検索エリア */}
       <div className="mb-6 flex flex-col sm:flex-row sm:items-end sm:gap-4">
-        {/* 日付入力 */}
         <div className="flex flex-wrap items-center gap-2 mb-2 sm:mb-0">
           <input
             type="date"
@@ -100,7 +101,6 @@ export default function GameTable({ games }: { games: Game[] }) {
           />
         </div>
 
-        {/* 検索ボックス */}
         <div className="flex gap-2 flex-col sm:flex-row flex-1">
           <input
             type="text"
@@ -181,69 +181,69 @@ export default function GameTable({ games }: { games: Game[] }) {
             </button>
             <h2 className="text-lg font-bold mb-4">棋譜再生</h2>
             <div className="relative overflow-hidden" style={{ height: '80vh' }}>
-            <iframe
-              srcDoc={`
-                <!DOCTYPE html>
-                <html lang="ja">
-                  <head>
-                    <meta charset="UTF-8">
-                    <script defer src="https://cdn.jsdelivr.net/npm/shogi-player"></script>
-                    <style>
-                      html, body {
-                        margin: 0;
-                        padding: 0;
-                        height: 100%;
-                        width: 100%;
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        background: white;
-                      }
-                      .container {
-                        width: 100%;
-                        max-width: 100%;
-                        padding: 0 1rem;
-                        box-sizing: border-box;
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                      }
-                      shogi-player-wc {
-                        width: 100%;
-                        max-width: 480px;
-                        height: auto;
-                      }
-                    </style>
-                  </head>
-                  <body>
-                    <div class="container">
-                      <shogi-player-wc
-                        id="player"
-                        sp_turn="0"
-                        sp_controller="true"
-                        sp_piece_variant="paper"
-                        sp_coordinate="true"
-                        sp_autoplay="false"
-                        sp_start_move="0"
-                        sp_player_info='{
-                          "black": {
-                            "name": "${(selectedGame.sente_name + '（' + selectedGame.sente_univ + '・' + selectedGame.sente_grade + '）').replace(/"/g, '&quot;')}"
-                          },
-                          "white": {
-                            "name": "${(selectedGame.gote_name + '（' + selectedGame.gote_univ + '・' + selectedGame.gote_grade + '）').replace(/"/g, '&quot;')}"
-                          }
-                        }'
-                        sp_body="${(selectedGame.kifu).replace(/"/g, '&quot;')}"
-                      ></shogi-player-wc>
-                    </div>
-                  </body>
-                </html>
-              `}
-              sandbox="allow-scripts"
-              width="100%"
-              height="100%"
-              className="border rounded"
-            />
+              <iframe
+                srcDoc={`
+                  <!DOCTYPE html>
+                  <html lang="ja">
+                    <head>
+                      <meta charset="UTF-8">
+                      <script defer src="https://cdn.jsdelivr.net/npm/shogi-player"></script>
+                      <style>
+                        html, body {
+                          margin: 0;
+                          padding: 0;
+                          height: 100%;
+                          width: 100%;
+                          display: flex;
+                          justify-content: center;
+                          align-items: center;
+                          background: white;
+                        }
+                        .container {
+                          width: 100%;
+                          max-width: 100%;
+                          padding: 0 1rem;
+                          box-sizing: border-box;
+                          display: flex;
+                          justify-content: center;
+                          align-items: center;
+                        }
+                        shogi-player-wc {
+                          width: 100%;
+                          max-width: 480px;
+                          height: auto;
+                        }
+                      </style>
+                    </head>
+                    <body>
+                      <div class="container">
+                        <shogi-player-wc
+                          id="player"
+                          sp_turn="0"
+                          sp_controller="true"
+                          sp_piece_variant="paper"
+                          sp_coordinate="true"
+                          sp_autoplay="false"
+                          sp_start_move="0"
+                          sp_player_info='{
+                            "black": {
+                              "name": "${(selectedGame.sente_name + '（' + selectedGame.sente_univ + '・' + selectedGame.sente_grade + '）').replace(/"/g, '&quot;')}"
+                            },
+                            "white": {
+                              "name": "${(selectedGame.gote_name + '（' + selectedGame.gote_univ + '・' + selectedGame.gote_grade + '）').replace(/"/g, '&quot;')}"
+                            }
+                          }'
+                          sp_body="${(selectedGame.kifu).replace(/"/g, '&quot;')}"
+                        ></shogi-player-wc>
+                      </div>
+                    </body>
+                  </html>
+                `}
+                sandbox="allow-scripts"
+                width="100%"
+                height="100%"
+                className="border rounded"
+              />
             </div>
           </div>
         </div>
