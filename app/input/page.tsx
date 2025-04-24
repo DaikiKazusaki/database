@@ -83,7 +83,7 @@ export default function Page() {
         <textarea
           name="kifu"
           id="kifu"
-          placeholder='KI2形式で棋譜を入力してください。'
+          placeholder='KIF形式で棋譜を入力してください。(これ以外の形式で入力すると棋譜の再生ができなくなります。)'
           required
           className="border p-2 w-full h-40 rounded resize-none overflow-auto"
         ></textarea>
