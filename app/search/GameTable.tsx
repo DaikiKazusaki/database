@@ -82,19 +82,19 @@ export default function GameTable({ games }: { games: Game[] }) {
       {/* 検索エリア */}
       <div className="mb-6 flex flex-col sm:flex-row sm:items-end sm:gap-4">
         {/* 日付入力（1行） */}
-        <div className="flex items-center gap-2 mb-2 sm:mb-0">
+        <div className="flex flex-wrap items-center gap-2 mb-2 sm:mb-0">
           <input
             type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
-            className="p-2 border border-gray-300 rounded"
+            className="p-2 border border-gray-300 rounded min-w-[120px] flex-1 sm:flex-none"
           />
           <span className="text-gray-700">～</span>
           <input
             type="date"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
-            className="p-2 border border-gray-300 rounded"
+            className="p-2 border border-gray-300 rounded min-w-[120px] flex-1 sm:flex-none"
           />
         </div>
 
