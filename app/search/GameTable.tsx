@@ -80,8 +80,9 @@ export default function GameTable({ games }: { games: Game[] }) {
       <h1 className="text-2xl font-bold text-center mb-6">棋譜一覧</h1>
 
       {/* 検索エリア */}
-      <div className="mb-6 flex flex-col md:flex-row gap-2 items-end flex-wrap">
-        <div className="flex items-center gap-2">
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-end sm:gap-4">
+        {/* 日付入力（1行） */}
+        <div className="flex items-center gap-2 mb-2 sm:mb-0">
           <input
             type="date"
             value={startDate}
@@ -96,19 +97,23 @@ export default function GameTable({ games }: { games: Game[] }) {
             className="p-2 border border-gray-300 rounded"
           />
         </div>
-        <input
-          type="text"
-          placeholder="名前、大学、大会名などで検索"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="flex-1 p-2 border border-gray-300 rounded min-w-[200px]"
-        />
-        <button
-          onClick={handleSearch}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 whitespace-nowrap"
-        >
-          検索
-        </button>
+
+        {/* 検索ボックス＋ボタン（1行） */}
+        <div className="flex gap-2 flex-col sm:flex-row flex-1">
+          <input
+            type="text"
+            placeholder="名前、大学、大会名などで検索"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="p-2 border border-gray-300 rounded flex-1 min-w-[200px]"
+          />
+          <button
+            onClick={handleSearch}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 sm:whitespace-nowrap"
+          >
+            検索
+          </button>
+        </div>
       </div>
 
       {/* 棋譜一覧 */}
