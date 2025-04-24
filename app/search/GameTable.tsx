@@ -212,7 +212,14 @@ export default function GameTable({ games }: { games: Game[] }) {
                       sp_controller="true"
                       sp_piece_variant="paper"
                       sp_coordinate="true"
-                      sp_player_info='{"black":{"name":"先手"}, "white":{"name":"後手"}}'
+                      sp_player_info='{
+                        "black": {
+                          "name": "${(selectedGame.sente_name + '（' + selectedGame.sente_univ + '・' + selectedGame.sente_grade + '）').replace(/"/g, '&quot;')}"
+                        },
+                        "white": {
+                          "name": "${(selectedGame.gote_name + '（' + selectedGame.gote_univ + '・' + selectedGame.gote_grade + '）').replace(/"/g, '&quot;')}"
+                        }
+                      }'
                       sp_body="${(selectedGame.kifu).replace(/"/g, '&quot;')}"
                     ></shogi-player-wc>
                   </div>
