@@ -19,13 +19,13 @@ export default function ClientProvider({
     }
   }, [router]);
 
-  // 非アクティブ時の自動リダイレクト（30分）
+  // 非アクティブ時の自動リダイレクト（10分）
   useEffect(() => {
     const resetTimeout = () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
       timeoutRef.current = setTimeout(() => {
         router.push('/');
-      }, 30 * 60 * 1000); // 30分
+      }, 10 * 60 * 1000); // 10分
     };
 
     const events = ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'];
