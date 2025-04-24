@@ -226,20 +226,16 @@ export default function GameTable({ games }: { games: Game[] }) {
                         sp_autoplay="false"
                         sp_start_move="0"
                         sp_player_info='{
-                          "black": "${(selectedGame.sente_name + '（' + selectedGame.sente_univ + '・' + selectedGame.sente_grade + '）').replace(/"/g, '&quot;')}",
-                          "white": "${(selectedGame.gote_name + '（' + selectedGame.gote_univ + '・' + selectedGame.gote_grade + '）').replace(/"/g, '&quot;')}"
+                          "black": {
+                            "name": "${(selectedGame.sente_name + '（' + selectedGame.sente_univ + '・' + selectedGame.sente_grade + '）').replace(/"/g, '&quot;')}"
+                          },
+                          "white": {
+                            "name": "${(selectedGame.gote_name + '（' + selectedGame.gote_univ + '・' + selectedGame.gote_grade + '）').replace(/"/g, '&quot;')}"
+                          }
                         }'
                         sp_body="${(selectedGame.kifu).replace(/"/g, '&quot;')}"
                       ></shogi-player-wc>
                     </div>
-                    <script>
-                      window.addEventListener('DOMContentLoaded', () => {
-                        const player = document.getElementById('player');
-                        if (player) {
-                          player.move(0); // 初期局面に戻す
-                        }
-                      });
-                    </script>
                   </body>
                 </html>
               `}
