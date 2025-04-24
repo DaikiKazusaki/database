@@ -22,17 +22,21 @@ export default function GameTable({ games }: { games: Game[] }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [startSearchDate, setStartSearchDate] = useState('');
+  const [endSearchDate, setEndSearchDate] = useState('');
 
   const handleSearch = () => {
     setSearchTerm(searchQuery);
+    setStartSearchDate(startDate);
+    setEndSearchDate(endDate);
   };
 
   const filteredGames = games.filter((game) => {
     const query = searchTerm.toLowerCase();
     const gameDate = new Date(game.date);
     const inDateRange =
-      (!startDate || new Date(startDate) <= gameDate) &&
-      (!endDate || gameDate <= new Date(endDate));
+      (!startSearchDate || new Date(startSearchDate) <= gameDate) &&
+      (!endSearchDate || gameDate <= new Date(endSearchDate));
 
     const matchesQuery =
       game.sente_name.toLowerCase().includes(query) ||
