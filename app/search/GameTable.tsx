@@ -219,6 +219,7 @@ export default function GameTable({ games }: { games: Game[] }) {
                     <div class="container">
                       <shogi-player-wc
                         id="player"
+                        sp_turn="0"
                         sp_controller="true"
                         sp_piece_variant="paper"
                         sp_coordinate="true"
