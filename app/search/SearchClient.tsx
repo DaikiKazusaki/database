@@ -36,6 +36,15 @@ export default function SearchClient() {
   }, []);
 
   const handleSearch = () => {
+    // 条件が空かどうか判定
+    const isEmptySearch = !playerName && !university && !startDate && !endDate;
+  
+    if (isEmptySearch) {
+      // 条件がなければすべて表示
+      setFilteredGames(games);
+      return;
+    }
+  
     const filtered = games.filter(game => {
       const matchName =
         game.sente_name.includes(playerName) ||
@@ -46,11 +55,13 @@ export default function SearchClient() {
       const matchDate =
         (!startDate || new Date(game.date) >= new Date(startDate)) &&
         (!endDate || new Date(game.date) <= new Date(endDate));
-
+  
       return matchName && matchUniv && matchDate;
     });
+  
     setFilteredGames(filtered);
   };
+  
 
   return (
     <div className="p-4">
