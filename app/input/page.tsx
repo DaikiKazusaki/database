@@ -10,7 +10,7 @@ export default function Page() {
   async function create(formData: FormData) {
     'use server';
     const sql = neon(`${process.env.DATABASE_URL}`);
-
+  
     const sente_name = formData.get('sente_name');
     const sente_univ = formData.get('sente_univ');
     const sente_grade = formData.get('sente_grade');
@@ -20,8 +20,14 @@ export default function Page() {
     const event = formData.get('event');
     const date = formData.get('date');
     const result = formData.get('result');
-    const kifu = formData.get('kifu');
-
+    const kifuRaw = formData.get('kifu') as string;
+  
+    // コメントアウト（*#系）を削除
+    const kifu = kifuRaw
+      .split("\n")
+      .filter(line => !line.trim().startsWith("*#"))
+      .join("\n");
+  
     await sql`
       INSERT INTO games (
         sente_name, sente_univ, sente_grade,
@@ -34,7 +40,7 @@ export default function Page() {
         ${event}, ${date}, ${result}, ${kifu}
       )
     `;
-  }
+  }  
 
   return (
     <form action={create} className="p-6 max-w-3xl mx-auto space-y-6 bg-white rounded shadow-md">
