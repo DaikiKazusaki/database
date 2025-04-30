@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type Game = {
   id: number;
@@ -16,8 +16,8 @@ type Game = {
   kifu: string;
 };
 
-export default function GameTable({ games }: { games: Game[] }) {
-  const [gameList, setGameList] = useState<Game[]>(games);
+export default function GameTable() {
+  const [gameList, setGameList] = useState<Game[]>([]);
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
@@ -25,6 +25,21 @@ export default function GameTable({ games }: { games: Game[] }) {
   const [endDate, setEndDate] = useState('');
   const [startSearchDate, setStartSearchDate] = useState('');
   const [endSearchDate, setEndSearchDate] = useState('');
+
+  // 初回ロード時にデータ取得
+  useEffect(() => {
+    const fetchGames = async () => {
+      try {
+        const res = await fetch('/api/games');
+        const data = await res.json();
+        setGameList(data);
+      } catch (err) {
+        console.error('データ取得エラー:', err);
+      }
+    };
+
+    fetchGames();
+  }, []);
 
   const handleSearch = () => {
     setSearchTerm(searchQuery);
