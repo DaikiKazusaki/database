@@ -11,14 +11,6 @@ export default function ClientProvider({
   const router = useRouter();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // ページリロード時にトップへリダイレクト
-  useEffect(() => {
-    const navEntry = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
-    if (navEntry?.type === 'reload') {
-      router.push('/');
-    }
-  }, [router]);
-
   // 非アクティブ時の自動リダイレクト（10分）
   useEffect(() => {
     const resetTimeout = () => {

@@ -70,8 +70,8 @@ export default function Page() {
       <div>
         <label className="block font-semibold mb-1">大会情報</label>
         <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0">
-          <input type="text" name="event" required className="border p-2 w-full rounded" />
-          <input type="date" name="date" required className="border p-2 w-full rounded" />
+          <input type="text" name="event" required className="border p-2 w-full rounded"　placeholder="大会名" />
+          <input type="date" name="date" required className="border p-2 w-full rounded" placeholder="日付"　/>
           <select name="result" required className="border p-2 w-full rounded">
             <option value="">結果を選択</option>
             <option value="先手勝ち">先手勝ち</option>
