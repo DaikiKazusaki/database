@@ -61,7 +61,7 @@ export default function Home() {
 
         {/* Search Section */}
         <section className="space-y-10">
-          <h2 className="text-3xl font-semibold text-center">このサイトの使い方</h2>
+          <h2 className="text-3xl font-semibold text-center">棋譜を検索するには？</h2>
           <div className="grid sm:grid-cols-3 gap-8">
             <div className="bg-white rounded-2xl shadow p-6 text-center space-y-4">
               <Search className="mx-auto text-blue-600 w-12 h-12" />
