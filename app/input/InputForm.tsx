@@ -106,6 +106,7 @@ export default function InputForm() {
             <option value="先手勝ち">先手勝ち</option>
             <option value="後手勝ち">後手勝ち</option>
             <option value="引き分け">千日手</option>
+            <option value="持将棋">持将棋</option>
             <option value="先手宣言勝ち">先手宣言勝ち</option>
             <option value="後手宣言勝ち">後手宣言勝ち</option>
           </select>
