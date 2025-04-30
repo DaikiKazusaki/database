@@ -11,7 +11,7 @@ export default function LoginPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (password === "handai-shogi-club") {
+    if (password === process.env.PASSWARD) {
       router.push("/home");
     } else {
       setError("パスワードが正しくありません");
