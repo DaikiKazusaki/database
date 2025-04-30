@@ -4,10 +4,30 @@ import { useState, useEffect } from "react";
 
 export default function InputForm() {
   const [submitted, setSubmitted] = useState(false);
+  const [formValues, setFormValues] = useState({
+    sente_name: "",
+    sente_univ: "",
+    sente_grade: "",
+    gote_name: "",
+    gote_univ: "",
+    gote_grade: "",
+    event: "",
+    date: "",
+    result: "",
+    kifu: "",
+  });
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
+    const { name, value } = e.target;
+    setFormValues((prev) => ({ ...prev, [name]: value }));
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
+    const formData = new FormData();
+    for (const [key, value] of Object.entries(formValues)) {
+      formData.append(key, value);
+    }
 
     const response = await fetch("/api/submit-kifu", {
       method: "POST",
@@ -16,7 +36,18 @@ export default function InputForm() {
 
     if (response.ok) {
       setSubmitted(true);
-      e.currentTarget.reset();
+      setFormValues({
+        sente_name: "",
+        sente_univ: "",
+        sente_grade: "",
+        gote_name: "",
+        gote_univ: "",
+        gote_grade: "",
+        event: "",
+        date: "",
+        result: "",
+        kifu: "",
+      });
     }
   }
 
@@ -38,9 +69,14 @@ export default function InputForm() {
       <div>
         <label className="block font-semibold mb-1">先手</label>
         <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0">
-          <input type="text" name="sente_name" required className="border p-2 w-full rounded" placeholder="氏名" />
-          <input type="text" name="sente_univ" required className="border p-2 w-full rounded" placeholder="大学名" />
-          <input type="text" name="sente_grade" required className="border p-2 w-full rounded" placeholder="学年" />
+          <input type="text" name="sente_name" required value={formValues.sente_name} onChange={handleChange} className="border p-2 w-full rounded" placeholder="氏名" />
+          <input type="text" name="sente_univ" required value={formValues.sente_univ} onChange={handleChange} className="border p-2 w-full rounded" placeholder="大学名" />
+          <select name="sente_grade" required value={formValues.sente_grade} onChange={handleChange} className="border p-2 w-full rounded">
+            <option value="">学年を選択</option>
+            {[...Array(6)].map((_, i) => (
+              <option key={i + 1} value={`${i + 1}`}>{i + 1}</option>
+            ))}
+          </select>
         </div>
       </div>
 
@@ -48,19 +84,24 @@ export default function InputForm() {
       <div>
         <label className="block font-semibold mb-1">後手</label>
         <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0">
-          <input type="text" name="gote_name" required className="border p-2 w-full rounded" placeholder="氏名" />
-          <input type="text" name="gote_univ" required className="border p-2 w-full rounded" placeholder="大学名" />
-          <input type="text" name="gote_grade" required className="border p-2 w-full rounded" placeholder="学年" />
+          <input type="text" name="gote_name" required value={formValues.gote_name} onChange={handleChange} className="border p-2 w-full rounded" placeholder="氏名" />
+          <input type="text" name="gote_univ" required value={formValues.gote_univ} onChange={handleChange} className="border p-2 w-full rounded" placeholder="大学名" />
+          <select name="gote_grade" required value={formValues.gote_grade} onChange={handleChange} className="border p-2 w-full rounded">
+            <option value="">学年を選択</option>
+            {[...Array(6)].map((_, i) => (
+              <option key={i + 1} value={`${i + 1}`}>{i + 1}</option>
+            ))}
+          </select>
         </div>
       </div>
 
-      {/* 大会名・対局日・結果 */}
+      {/* 大会情報 */}
       <div>
         <label className="block font-semibold mb-1">大会情報</label>
         <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0">
-          <input type="text" name="event" required className="border p-2 w-full rounded" placeholder="大会名" />
-          <input type="date" name="date" required className="border p-2 w-full rounded" placeholder="日付" />
-          <select name="result" required className="border p-2 w-full rounded">
+          <input type="text" name="event" required value={formValues.event} onChange={handleChange} className="border p-2 w-full rounded" placeholder="大会名" />
+          <input type="date" name="date" required value={formValues.date} onChange={handleChange} className="border p-2 w-full rounded" />
+          <select name="result" required value={formValues.result} onChange={handleChange} className="border p-2 w-full rounded">
             <option value="">結果を選択</option>
             <option value="先手勝ち">先手勝ち</option>
             <option value="後手勝ち">後手勝ち</option>
@@ -79,6 +120,8 @@ export default function InputForm() {
           id="kifu"
           placeholder="KIF形式で棋譜を入力してください。(これ以外の形式で入力すると棋譜の再生ができなくなります。)"
           required
+          value={formValues.kifu}
+          onChange={handleChange}
           className="border p-2 w-full h-40 rounded resize-none overflow-auto"
         ></textarea>
       </div>
