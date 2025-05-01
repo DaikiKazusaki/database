@@ -197,68 +197,70 @@ export default function GameTable() {
             <h2 className="text-lg font-bold mb-4">棋譜再生</h2>
             <div className="relative overflow-hidden" style={{ height: '80vh' }}>
             <iframe
-              srcDoc={`
-                <!DOCTYPE html>
-                <html lang="ja">
-                  <head>
-                    <meta charset="UTF-8">
-                    <script defer src="https://cdn.jsdelivr.net/npm/shogi-player"></script>
-                    <style>
-                      html, body {
-                        margin: 0;
-                        padding: 0;
-                        height: 100%;
-                        width: 100%;
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        background: white;
+              srcDoc={`<!DOCTYPE html>
+              <html lang="ja">
+                <head>
+                  <meta charset="UTF-8" />
+                  <script defer src="https://cdn.jsdelivr.net/npm/shogi-player"></script>
+                  <style>
+                    html, body {
+                      margin: 0;
+                      padding: 0;
+                      height: 100%;
+                      width: 100%;
+                      display: flex;
+                      justify-content: center;
+                      align-items: center;
+                      background: white;
+                    }
+                    .container {
+                      width: 100%;
+                      height: 100%;
+                      display: flex;
+                      justify-content: center;
+                      align-items: center;
+                    }
+                    shogi-player-wc {
+                      display: block;
+                    }
+                  </style>
+                </head>
+                <body>
+                  <div class="container">
+                    <shogi-player-wc
+                      id="player"
+                      sp_turn="0"
+                      sp_controller="true"
+                      sp_piece_variant="paper"
+                      sp_coordinate="true"
+                      sp_autoplay="false"
+                      sp_start_move="0"
+                      sp_player_info='{
+                        "black": "${(selectedGame.sente_name + '（' + selectedGame.sente_univ + '・' + selectedGame.sente_grade + '）').replace(/"/g, '&quot;')}",
+                        "white": "${(selectedGame.gote_name + '（' + selectedGame.gote_univ + '・' + selectedGame.gote_grade + '）').replace(/"/g, '&quot;')}"
+                      }'
+                      sp_body="${selectedGame.kifu.replace(/"/g, '&quot;')}"
+                    ></shogi-player-wc>
+                  </div>
+                  <script>
+                    const player = document.getElementById('player');
+                    function adjustSize() {
+                      const isPortrait = window.innerHeight > window.innerWidth;
+                      if (isPortrait) {
+                        player.style.width = '100%';
+                        player.style.maxWidth = '480px';
+                        player.style.height = 'auto';
+                      } else {
+                        player.style.height = '90%';
+                        player.style.width = 'auto';
+                        player.style.maxHeight = '600px';
                       }
-                      .container {
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        width: 100%;
-                        height: 100%;
-                        box-sizing: border-box;
-                      }
-                      shogi-player-wc {
-                        width: 100vmin; /* 短辺を基準に最大表示 */
-                        height: auto;
-                        max-width: 100%;
-                        max-height: 100%;
-                        aspect-ratio: 1 / 1; /* 正方形を維持 */
-                      }
-                    </style>
-                  </head>
-                  <body>
-                    <div class="container">
-                      <shogi-player-wc
-                        id="player"
-                        sp_turn="0"
-                        sp_controller="true"
-                        sp_piece_variant="paper"
-                        sp_coordinate="true"
-                        sp_autoplay="false"
-                        sp_start_move="0"
-                        sp_player_info='{
-                          "black": {
-                            "name": "${(selectedGame.sente_name + '（' + selectedGame.sente_univ + '・' + selectedGame.sente_grade + '）').replace(/"/g, '&quot;')}"
-                          },
-                          "white": {
-                            "name": "${(selectedGame.gote_name + '（' + selectedGame.gote_univ + '・' + selectedGame.gote_grade + '）').replace(/"/g, '&quot;')}"
-                          }
-                        }'
-                        sp_body="${(selectedGame.kifu).replace(/"/g, '&quot;')}"
-                      ></shogi-player-wc>
-                    </div>
-                  </body>
-                </html>
-              `}
-              sandbox="allow-scripts"
-              width="100%"
-              height="100%"
-              className="border rounded"
+                    }
+                    window.addEventListener('resize', adjustSize);
+                    window.addEventListener('load', adjustSize);
+                  </script>
+                </body>
+              </html>`}
             />
             </div>
           </div>
