@@ -20,13 +20,10 @@ export default function GameTable() {
   const [gameList, setGameList] = useState<Game[]>([]);
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchTerm, setSearchTerm] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [startSearchDate, setStartSearchDate] = useState('');
-  const [endSearchDate, setEndSearchDate] = useState('');
 
-  // 初回ロード時にデータ取得
+  // データ取得
   useEffect(() => {
     const fetchGames = async () => {
       try {
@@ -37,22 +34,16 @@ export default function GameTable() {
         console.error('データ取得エラー:', err);
       }
     };
-
     fetchGames();
   }, []);
 
-  const handleSearch = () => {
-    setSearchTerm(searchQuery);
-    setStartSearchDate(startDate);
-    setEndSearchDate(endDate);
-  };
-
   const filteredGames = gameList.filter((game) => {
-    const query = searchTerm.toLowerCase();
+    const query = searchQuery.toLowerCase();
     const gameDate = new Date(game.date);
-    const inDateRange =
-      (!startSearchDate || new Date(startSearchDate) <= gameDate) &&
-      (!endSearchDate || gameDate <= new Date(endSearchDate));
+    const start = startDate ? new Date(startDate) : null;
+    const end = endDate ? new Date(endDate + 'T23:59:59') : null;
+
+    const inDateRange = (!start || start <= gameDate) && (!end || gameDate <= end);
     const matchesQuery =
       game.sente_name.toLowerCase().includes(query) ||
       game.sente_univ.toLowerCase().includes(query) ||
@@ -62,6 +53,7 @@ export default function GameTable() {
       game.gote_grade.toLowerCase().includes(query) ||
       game.event.toLowerCase().includes(query) ||
       game.result.toLowerCase().includes(query);
+
     return inDateRange && matchesQuery;
   });
 
@@ -124,12 +116,6 @@ export default function GameTable() {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="p-2 border border-gray-300 rounded flex-1 min-w-[200px]"
           />
-          <button
-            onClick={handleSearch}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 sm:whitespace-nowrap"
-          >
-            検索
-          </button>
         </div>
       </div>
 
@@ -186,8 +172,14 @@ export default function GameTable() {
 
       {/* 棋譜再生 */}
       {selectedGame && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl shadow-lg max-w-2xl w-full p-6 relative">
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          onClick={() => setSelectedGame(null)}
+        >
+          <div
+            className="bg-white rounded-xl shadow-lg max-w-2xl w-full p-6 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
               onClick={() => setSelectedGame(null)}
               className="absolute top-2 right-3 text-gray-600 hover:text-red-600 text-3xl font-bold leading-none"
@@ -195,54 +187,51 @@ export default function GameTable() {
               ✕
             </button>
             <h2 className="text-lg font-bold mb-4">棋譜再生</h2>
-            <div className="relative w-full" style={{ aspectRatio: '4 / 3' }}>
-  <iframe
-    className="w-full h-full"
-    style={{ border: 'none' }}
-    srcDoc={`<!DOCTYPE html>
-      <html lang="ja">
-        <head>
-          <meta charset="UTF-8" />
-          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <script defer src="https://cdn.jsdelivr.net/npm/shogi-player"></script>
-          <style>
-            html, body {
-              margin: 0;
-              padding: 0;
-              height: 100%;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-            }
-            shogi-player-wc {
-              width: 100%;
-              max-width: 100%;
-              height: auto;
-            }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <shogi-player-wc
-              id="player"
-              sp_turn="0"
-              sp_controller="true"
-              sp_piece_variant="real"
-              sp_board_variant="wood"
-              sp_coordinate="true"
-              sp_autoplay="false"
-              sp_start_move="0"
-              sp_player_info='{
-                "black": "${(selectedGame.sente_name + '（' + selectedGame.sente_univ + '・' + selectedGame.sente_grade + '）').replace(/"/g, '&quot;')}",
-                "white": "${(selectedGame.gote_name + '（' + selectedGame.gote_univ + '・' + selectedGame.gote_grade + '）').replace(/"/g, '&quot;')}"
-              }'
-              sp_body="${selectedGame.kifu.replace(/"/g, '&quot;')}"
-            ></shogi-player-wc>
-          </div>
-        </body>
-      </html>`}
-  />
-</div>
+            <div className="relative w-full h-[600px]">
+              <iframe
+                className="w-full h-full"
+                style={{ border: 'none' }}
+                srcDoc={`<!DOCTYPE html>
+                  <html lang="ja">
+                    <head>
+                      <meta charset="UTF-8" />
+                      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                      <script type="module" src="https://cdn.jsdelivr.net/npm/shogi-player"></script>
+                      <style>
+                        html, body {
+                          margin: 0;
+                          padding: 0;
+                          height: 100%;
+                          width: 100%;
+                          display: flex;
+                          justify-content: center;
+                          align-items: center;
+                          background-color: white;
+                        }
+                        shogi-player-wc {
+                          width: 100%;
+                          height: 100%;
+                        }
+                      </style>
+                    </head>
+                    <shogi-player-wc
+                      id="player"
+                      sp_turn="0"
+                      sp_controller="true"
+                      sp_piece_variant="real"
+                      sp_board_variant="wood"
+                      sp_coordinate="true"
+                      sp_autoplay="false"
+                      sp_start_move="0"
+                      sp_player_info='{
+                        "black": "${(selectedGame.sente_name + '（' + selectedGame.sente_univ + '・' + selectedGame.sente_grade + '）').replace(/"/g, '&quot;')}",
+                        "white": "${(selectedGame.gote_name + '（' + selectedGame.gote_univ + '・' + selectedGame.gote_grade + '）').replace(/"/g, '&quot;')}"
+                      }'
+                      sp_body="${selectedGame.kifu.replace(/"/g, '&quot;')}"
+                    ></shogi-player-wc>
+                  </html>`}
+              />
+            </div>
           </div>
         </div>
       )}
