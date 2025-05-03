@@ -16,7 +16,7 @@ export default function ClientProvider({
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
       timeoutRef.current = setTimeout(() => {
         router.push('/');
-      }, 1 * 60 * 1000); // 10分
+      }, 10 * 60 * 1000); // 10分
     };
 
     const handleVisibilityChange = () => {
