@@ -191,45 +191,42 @@ export default function GameTable() {
               <iframe
                 className="w-full h-full"
                 style={{ border: 'none' }}
-                srcDoc={`<!DOCTYPE html>
-                  <html lang="ja">
-                    <head>
-                      <meta charset="UTF-8" />
-                      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-                      <script type="module" src="https://cdn.jsdelivr.net/npm/shogi-player"></script>
-                      <style>
-                        html, body {
-                          margin: 0;
-                          padding: 0;
-                          height: 100%;
-                          width: 100%;
-                          display: flex;
-                          justify-content: center;
-                          align-items: center;
-                          background-color: white;
-                        }
-                        shogi-player-wc {
-                          width: 100%;
-                          height: 100%;
-                        }
-                      </style>
-                    </head>
-                    <shogi-player-wc
-                      id="player"
-                      sp_turn="0"
-                      sp_controller="true"
-                      sp_piece_variant="real"
-                      sp_board_variant="wood"
-                      sp_coordinate="true"
-                      sp_autoplay="false"
-                      sp_start_move="0"
-                      sp_player_info='{
-                        "black": "${(selectedGame.sente_name + '（' + selectedGame.sente_univ + '・' + selectedGame.sente_grade + '）').replace(/"/g, '&quot;')}",
-                        "white": "${(selectedGame.gote_name + '（' + selectedGame.gote_univ + '・' + selectedGame.gote_grade + '）').replace(/"/g, '&quot;')}"
-                      }'
-                      sp_body="${selectedGame.kifu.replace(/"/g, '&quot;')}"
-                    ></shogi-player-wc>
-                  </html>`}
+                srcDoc={`
+                  <!DOCTYPE html>
+                  <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <script defer src="https://cdn.jsdelivr.net/npm/shogi-player@1.1.24"></script>
+                    <style>
+                      .container {
+                        display: flex;
+                        justify-content: center;
+                      }
+                      shogi-player-wc {
+                        flex-basis: 640px;
+                      }
+                    </style>
+                  </head>
+                  <body>
+                    <div class="container">
+                      <shogi-player-wc
+                        id="player"
+                        sp_turn="0"
+                        sp_controller="true"
+                        sp_piece_variant="portella"
+                        sp_board_variant="wood_normal"
+                        sp_coordinate="true"
+                        sp_autoplay="false"
+                        sp_player_info='{
+                          "black": { name: "${(selectedGame.sente_name + '（' + selectedGame.sente_univ + '・' + selectedGame.sente_grade + '）').replace(/"/g, '&quot;')}"},
+                          "white": { name: "${(selectedGame.gote_name + '（' + selectedGame.gote_univ + '・' + selectedGame.gote_grade + '）').replace(/"/g, '&quot;')}"}
+                        }'
+                        sp_body="${selectedGame.kifu.replace(/"/g, '&quot;')}"
+                        ></shogi-player-wc>
+                    </div>
+                  </body>
+                  </html>  
+                `}
               />
             </div>
           </div>
