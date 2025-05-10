@@ -12,8 +12,9 @@
 | `/input` | 棋譜入力ページ |
 | `/search` | 棋譜検索ページ |
 
-## 棋譜再生ページ
-棋譜再生ページの作成には[こちら](https://shogi-player.netlify.app/guide/)のサイトを参考にしました．
+## 参考にしたサイト
+- [棋譜再生ページ](https://shogi-player.netlify.app/guide/)
+- [basic認証](https://qiita.com/axoloto210/items/747eb784e61b173d30b8)
 
 # Next.js project
 
