@@ -2,6 +2,24 @@
 
 ## ファイル構成
 ```
+----
+database/
+├── app/
+|   ├── api        
+|   ├── components // 全てのページで用いるファイル
+|   ├── home       // ホーム画面
+|   ├── input      // 棋譜入力画面
+|   ├── search     // 棋譜検索画面
+│   └── page.tsx
+├── public/
+├── .gitignore
+├── README.md
+├── eslint.config.mjs
+├── next.config.ts
+├── package-lock.json
+├── package.json
+├── postcss.config.mjs
+└── tsconfig.json
 ```
 
 ## ページ構成
