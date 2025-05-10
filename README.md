@@ -2,6 +2,24 @@
 
 ## ファイル構成
 ```
+----
+database/
+├── app/
+|   ├── api        
+|   ├── components // 全てのページで用いるファイル
+|   ├── home       // ホーム画面
+|   ├── input      // 棋譜入力画面
+|   ├── search     // 棋譜検索画面
+│   └── page.tsx
+├── public/
+├── .gitignore
+├── README.md
+├── eslint.config.mjs
+├── next.config.ts
+├── package-lock.json
+├── package.json
+├── postcss.config.mjs
+└── tsconfig.json
 ```
 
 ## ページ構成
@@ -12,8 +30,10 @@
 | `/input` | 棋譜入力ページ |
 | `/search` | 棋譜検索ページ |
 
-## 棋譜再生ページ
-棋譜再生ページの作成には[こちら](https://shogi-player.netlify.app/guide/)のサイトを参考にしました．
+## 参考にしたサイト
+- [Neon Databese公式ドキュメント](https://neon.tech/docs/introduction)
+- [棋譜再生ページ](https://shogi-player.netlify.app/guide/)
+- [basic認証](https://qiita.com/axoloto210/items/747eb784e61b173d30b8)
 
 # Next.js project
 
