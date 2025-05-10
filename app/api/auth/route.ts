@@ -1,6 +1,7 @@
-import { NextResponse } from "next/server"
+import type { NextApiRequest, NextApiResponse } from 'next'
 
-// 認証状態を確認するためのAPIエンドポイント
-export async function GET() {
-  return NextResponse.json({ authenticated: true })
+export default function handler(_: NextApiRequest, res: NextApiResponse) {
+  res.setHeader('WWW-authenticate', 'Basic realm="Secure Area"')
+  res.statusCode = 401
+  res.end(`Auth Required.`)
 }
