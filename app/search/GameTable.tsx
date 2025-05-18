@@ -1,49 +1,50 @@
-'use client';
+"use client"
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react"
 
 type Game = {
-  id: number;
-  sente_name: string;
-  sente_univ: string;
-  sente_grade: string;
-  gote_name: string;
-  gote_univ: string;
-  gote_grade: string;
-  event: string;
-  date: string;
-  result: string;
-  kifu: string;
-};
+  id: number
+  sente_name: string
+  sente_univ: string
+  sente_grade: string
+  gote_name: string
+  gote_univ: string
+  gote_grade: string
+  event: string
+  date: string
+  result: string
+  kifu: string
+}
 
 export default function GameTable() {
-  const [gameList, setGameList] = useState<Game[]>([]);
-  const [selectedGame, setSelectedGame] = useState<Game | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const [gameList, setGameList] = useState<Game[]>([])
+  const [selectedGame, setSelectedGame] = useState<Game | null>(null)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [startDate, setStartDate] = useState("")
+  const [endDate, setEndDate] = useState("")
+  const [deletingGameId, setDeletingGameId] = useState<number | null>(null)
 
   // データ取得
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const res = await fetch('/api/games');
-        const data = await res.json();
-        setGameList(data);
+        const res = await fetch("/api/games")
+        const data = await res.json()
+        setGameList(data)
       } catch (err) {
-        console.error('データ取得エラー:', err);
+        console.error("データ取得エラー:", err)
       }
-    };
-    fetchGames();
-  }, []);
+    }
+    fetchGames()
+  }, [])
 
   const filteredGames = gameList.filter((game) => {
-    const query = searchQuery.toLowerCase();
-    const gameDate = new Date(game.date);
-    const start = startDate ? new Date(startDate) : null;
-    const end = endDate ? new Date(endDate + 'T23:59:59') : null;
+    const query = searchQuery.toLowerCase()
+    const gameDate = new Date(game.date)
+    const start = startDate ? new Date(startDate) : null
+    const end = endDate ? new Date(endDate + "T23:59:59") : null
 
-    const inDateRange = (!start || start <= gameDate) && (!end || gameDate <= end);
+    const inDateRange = (!start || start <= gameDate) && (!end || gameDate <= end)
     const matchesQuery =
       game.sente_name.toLowerCase().includes(query) ||
       game.sente_univ.toLowerCase().includes(query) ||
@@ -52,39 +53,50 @@ export default function GameTable() {
       game.gote_univ.toLowerCase().includes(query) ||
       game.gote_grade.toLowerCase().includes(query) ||
       game.event.toLowerCase().includes(query) ||
-      game.result.toLowerCase().includes(query);
+      game.result.toLowerCase().includes(query)
 
-    return inDateRange && matchesQuery;
-  });
+    return inDateRange && matchesQuery
+  })
 
   const handleCopy = async (kifu: string) => {
     try {
-      await navigator.clipboard.writeText(kifu);
-      alert('棋譜をコピーしました');
+      await navigator.clipboard.writeText(kifu)
+      alert("棋譜をコピーしました")
     } catch {
-      alert('コピーに失敗しました');
+      alert("コピーに失敗しました")
     }
-  };
+  }
 
   const handleDelete = async (id: number) => {
-    if (!confirm('この棋譜を削除しますか？')) return;
+    setDeletingGameId(id)
+  }
+
+  const confirmDelete = async () => {
+    if (!deletingGameId) return
+
     try {
-      const res = await fetch('/api/delete-game', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id }),
-      });
-      const data = await res.json();
+      const res = await fetch("/api/delete-game", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: deletingGameId }),
+      })
+      const data = await res.json()
       if (data.success) {
-        alert('棋譜を削除しました');
-        setGameList((prev) => prev.filter((g) => g.id !== id));
+        alert("棋譜を削除しました")
+        setGameList((prev) => prev.filter((g) => g.id !== deletingGameId))
       } else {
-        alert('削除に失敗しました');
+        alert("削除に失敗しました")
       }
     } catch {
-      alert('エラーが発生しました');
+      alert("エラーが発生しました")
+    } finally {
+      setDeletingGameId(null)
     }
-  };
+  }
+
+  const cancelDelete = () => {
+    setDeletingGameId(null)
+  }
 
   return (
     <main className="p-6 max-w-6xl mx-auto">
@@ -122,14 +134,11 @@ export default function GameTable() {
       {/* 棋譜一覧 */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {filteredGames.map((game) => (
-          <div
-            key={game.id}
-            className="bg-white shadow rounded-xl p-4 border border-gray-200 flex flex-col"
-          >
+          <div key={game.id} className="bg-white shadow rounded-xl p-4 border border-gray-200 flex flex-col">
             <div className="flex flex-col md:flex-row justify-between gap-4">
               <div className="flex-1">
                 <div className="text-sm text-gray-600 mb-2">
-                  {new Date(game.date).toLocaleDateString('ja-JP')}・{game.event}
+                  {new Date(game.date).toLocaleDateString("ja-JP")}・{game.event}
                 </div>
                 <div className="text-sm mb-1">
                   <strong>先手：</strong>
@@ -190,7 +199,7 @@ export default function GameTable() {
             <div className="relative w-full h-[600px]">
               <iframe
                 className="w-full h-full"
-                style={{ border: 'none' }}
+                style={{ border: "none" }}
                 srcDoc={`
                   <!DOCTYPE html>
                   <head>
@@ -218,10 +227,10 @@ export default function GameTable() {
                         sp_coordinate="true"
                         sp_autoplay="false"
                         sp_player_info='{
-                          "black": { name: "${(selectedGame.sente_name + '（' + selectedGame.sente_univ + '・' + selectedGame.sente_grade + '）').replace(/"/g, '&quot;')}"},
-                          "white": { name: "${(selectedGame.gote_name + '（' + selectedGame.gote_univ + '・' + selectedGame.gote_grade + '）').replace(/"/g, '&quot;')}"}
+                          "black": { name: "${(selectedGame.sente_name + "（" + selectedGame.sente_univ + "・" + selectedGame.sente_grade + "）").replace(/"/g, "&quot;")}"},
+                          "white": { name: "${(selectedGame.gote_name + "（" + selectedGame.gote_univ + "・" + selectedGame.gote_grade + "）").replace(/"/g, "&quot;")}"}
                         }'
-                        sp_body="${selectedGame.kifu.replace(/"/g, '&quot;')}"
+                        sp_body="${selectedGame.kifu.replace(/"/g, "&quot;")}"
                         ></shogi-player-wc>
                     </div>
                   </body>
@@ -232,6 +241,23 @@ export default function GameTable() {
           </div>
         </div>
       )}
+
+      {/* 削除確認ダイアログ */}
+      {deletingGameId !== null && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-lg p-6 max-w-sm w-full">
+            <h3 className="text-lg font-medium mb-4">この棋譜を削除しますか？</h3>
+            <div className="flex justify-end gap-3">
+              <button onClick={cancelDelete} className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300">
+                いいえ
+              </button>
+              <button onClick={confirmDelete} className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
+                はい
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
-  );
+  )
 }
