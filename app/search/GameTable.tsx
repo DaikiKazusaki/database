@@ -18,7 +18,6 @@ type Game = {
 
 export default function GameTable() {
   const [gameList, setGameList] = useState<Game[]>([])
-  const [selectedGame, setSelectedGame] = useState<Game | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
   const [startDate, setStartDate] = useState("")
   const [endDate, setEndDate] = useState("")
@@ -162,7 +161,7 @@ export default function GameTable() {
                   コピー
                 </button>
                 <button
-                  onClick={() => setSelectedGame(game)}
+                  onClick={() => (window.location.href = `/game-replay/${game.id}`)}
                   className="w-full md:w-[100px] px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 text-sm"
                 >
                   棋譜再生
@@ -178,69 +177,6 @@ export default function GameTable() {
           </div>
         ))}
       </div>
-
-      {/* 棋譜再生 */}
-      {selectedGame && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-          onClick={() => setSelectedGame(null)}
-        >
-          <div
-            className="bg-white rounded-xl shadow-lg max-w-2xl w-full p-6 relative"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={() => setSelectedGame(null)}
-              className="absolute top-2 right-3 text-gray-600 hover:text-red-600 text-3xl font-bold leading-none"
-            >
-              ✕
-            </button>
-            <h2 className="text-lg font-bold mb-4">棋譜再生</h2>
-            <div className="relative w-full h-[600px]">
-              <iframe
-                className="w-full h-full"
-                style={{ border: "none" }}
-                srcDoc={`
-                  <!DOCTYPE html>
-                  <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <script defer src="https://cdn.jsdelivr.net/npm/shogi-player@1.1.24"></script>
-                    <style>
-                      .container {
-                        display: flex;
-                        justify-content: center;
-                      }
-                      shogi-player-wc {
-                        flex-basis: 640px;
-                      }
-                    </style>
-                  </head>
-                  <body>
-                    <div class="container">
-                      <shogi-player-wc
-                        id="player"
-                        sp_turn="0"
-                        sp_controller="true"
-                        sp_piece_variant="portella"
-                        sp_board_variant="wood_normal"
-                        sp_coordinate="true"
-                        sp_autoplay="false"
-                        sp_player_info='{
-                          "black": { name: "${(selectedGame.sente_name + "（" + selectedGame.sente_univ + "・" + selectedGame.sente_grade + "）").replace(/"/g, "&quot;")}"},
-                          "white": { name: "${(selectedGame.gote_name + "（" + selectedGame.gote_univ + "・" + selectedGame.gote_grade + "）").replace(/"/g, "&quot;")}"}
-                        }'
-                        sp_body="${selectedGame.kifu.replace(/"/g, "&quot;")}"
-                        ></shogi-player-wc>
-                    </div>
-                  </body>
-                  </html>  
-                `}
-              />
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* 削除確認ダイアログ */}
       {deletingGameId !== null && (
