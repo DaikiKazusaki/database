@@ -2,8 +2,10 @@ import { cache } from "react"
 import { notFound } from "next/navigation"
 import { neon } from "@neondatabase/serverless"
 import type { Metadata } from "next"
+import Link from "next/link"
+import { ArrowLeft } from "lucide-react"
 import type { Game } from "../types"
-import GameDetail from "./GameDetail"
+import KifuPlayer from "../../components/KifuPlayer"
 
 export const dynamic = "force-dynamic"
 
@@ -53,5 +55,17 @@ export default async function GamePage({ params, searchParams }: PageProps) {
   }
   const backHref = query.toString() ? `/search?${query.toString()}` : "/search"
 
-  return <GameDetail game={game} backHref={backHref} />
+  return (
+    <div className="p-2 sm:p-4 max-w-5xl mx-auto">
+      <Link
+        href={backHref}
+        className="inline-flex items-center gap-1 text-blue-700 hover:underline mb-2"
+      >
+        <ArrowLeft size={18} />
+        棋譜一覧に戻る
+      </Link>
+
+      <KifuPlayer game={game} />
+    </div>
+  )
 }
