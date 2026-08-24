@@ -11,3 +11,6 @@ export type Game = {
   result: string
   kifu: string
 }
+
+// 一覧では棋譜本文を扱わない（1件あたり数KBあるため）
+export type GameSummary = Omit<Game, "kifu">

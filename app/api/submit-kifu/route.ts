@@ -1,19 +1,11 @@
-import { neon } from '@neondatabase/serverless';
+import { getSql } from '../../lib/db';
 import { parseKifu } from '../../lib/parseKifu';
-
-const REQUIRED_FIELDS = {
-  sente_name: '先手の氏名',
-  sente_univ: '先手の大学名',
-  sente_grade: '先手の学年',
-  gote_name: '後手の氏名',
-  gote_univ: '後手の大学名',
-  gote_grade: '後手の学年',
-  event: '大会名',
-  date: '対局日',
-  result: '結果',
-} as const;
-
-type RequiredField = keyof typeof REQUIRED_FIELDS;
+import {
+  GAME_FIELDS,
+  cleanKifu,
+  readGameValues,
+  validateGame,
+} from '../../lib/gameValidation';
 
 function textResponse(body: string, status: number) {
   return new Response(body, {
@@ -30,42 +22,50 @@ export async function POST(request: Request) {
     return textResponse('棋譜が入力されていません．', 400);
   }
 
-  const kifu = kifuRaw
-    .split("\n")
-    .filter(line => !line.trim().startsWith("*#"))
-    .join("\n");
+  const kifu = cleanKifu(kifuRaw);
 
   // フォームで空のまま送られた項目は棋譜から補完する
   const parsed = parseKifu(kifu);
-  const values = {} as Record<RequiredField, string>;
-  for (const field of Object.keys(REQUIRED_FIELDS) as RequiredField[]) {
-    const input = formData.get(field);
-    const trimmed = typeof input === 'string' ? input.trim() : '';
-    values[field] = trimmed || parsed[field];
+  const values = readGameValues(formData);
+  for (const field of GAME_FIELDS) {
+    if (!values[field]) values[field] = parsed[field];
   }
 
-  const missing = (Object.keys(REQUIRED_FIELDS) as RequiredField[]).filter(
-    field => !values[field]
-  );
-  if (missing.length > 0) {
-    const labels = missing.map(field => REQUIRED_FIELDS[field]).join('・');
-    return textResponse(`次の項目が入力されていません：${labels}`, 400);
+  const errors = validateGame(values, kifu);
+  if (errors.length > 0) {
+    return textResponse(errors.join('\n'), 400);
   }
 
-  const sql = neon(`${process.env.DATABASE_URL}`);
+  try {
+    const sql = getSql();
 
-  await sql`
-    INSERT INTO games (
-      sente_name, sente_univ, sente_grade,
-      gote_name, gote_univ, gote_grade,
-      event, date, result, kifu
-    )
-    VALUES (  
-      ${values.sente_name}, ${values.sente_univ}, ${values.sente_grade},
-      ${values.gote_name}, ${values.gote_univ}, ${values.gote_grade},
-      ${values.event}, ${values.date}, ${values.result}, ${kifu}
-    )
-  `;
+    // 同じ棋譜の二重登録を防ぐ
+    const duplicated = await sql`
+      SELECT id FROM games WHERE md5(kifu) = md5(${kifu}) AND deleted_at IS NULL LIMIT 1
+    `;
+    if (duplicated.length > 0) {
+      return textResponse(
+        `同じ棋譜が既に登録されています（ID: ${duplicated[0].id}）．`,
+        409
+      );
+    }
 
-  return textResponse('OK', 200);
+    await sql`
+      INSERT INTO games (
+        sente_name, sente_univ, sente_grade,
+        gote_name, gote_univ, gote_grade,
+        event, date, result, kifu
+      )
+      VALUES (
+        ${values.sente_name}, ${values.sente_univ}, ${values.sente_grade},
+        ${values.gote_name}, ${values.gote_univ}, ${values.gote_grade},
+        ${values.event}, ${values.date}, ${values.result}, ${kifu}
+      )
+    `;
+
+    return textResponse('OK', 200);
+  } catch (error) {
+    console.error('棋譜の登録に失敗しました:', error);
+    return textResponse('棋譜の登録に失敗しました．', 500);
+  }
 }

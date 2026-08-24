@@ -9,7 +9,7 @@ database/
 |   ├── components // 全てのページで用いるファイル
 |   ├── home       // ホーム画面
 |   ├── input      // 棋譜入力画面
-|   ├── lib        // 棋譜の解析処理
+|   ├── lib        // 棋譜の解析・DB接続・入力検証
 |   ├── search     // 棋譜検索画面
 │   └── page.tsx
 ├── public/
@@ -32,9 +32,31 @@ database/
 | `/input` | 棋譜入力ページ（KIF形式の棋譜から対局情報を自動入力） |
 | `/search` | 棋譜検索ページ |
 | `/search/[id]` | 棋譜再生ページ（個別の対局） |
+| `/search/[id]/edit` | 棋譜の編集ページ |
 
 ## 認証
 サイト全体を `middleware.ts` によるBasic認証で保護しています．静的アセット（`/_next/static` など）以外の全てのページ・APIにアクセスする際、ブラウザの認証ダイアログでユーザー名とパスワードの入力が必要です．
+
+## API
+| エンドポイント | 内容 |
+| ---- | ---- |
+| `GET /api/games` | 棋譜一覧（`q`・`from`・`to`で絞り込み、`limit`・`offset`でページング）．棋譜本文は含まない |
+| `GET /api/games/[id]` | 棋譜1件（本文つき） |
+| `GET /api/suggestions` | 入力候補（氏名・大学名・大会名） |
+| `POST /api/submit-kifu` | 棋譜の登録（未入力項目は棋譜から補完、重複は登録しない） |
+| `POST /api/update-game` | 棋譜の更新 |
+| `POST /api/delete-game` | 棋譜の削除（`deleted_at`を立てる論理削除） |
+
+## データベース
+`games` テーブルの主な仕様．
+
+| 項目 | 内容 |
+| ---- | ---- |
+| `deleted_at` | 削除日時．NULLのものだけを表示する（誤削除しても復元できる） |
+| `games_date_idx` | `(date DESC, id DESC)` の一覧・並び替え用インデックス |
+| `games_kifu_md5_idx` | `md5(kifu)` の重複登録チェック用インデックス |
+
+削除した棋譜を復元する場合は `UPDATE games SET deleted_at = NULL WHERE id = ...;` を実行する．
 
 ## 環境変数
 | 変数名 | 内容 |
