@@ -16,7 +16,7 @@ database/
 ├── .gitignore
 ├── README.md
 ├── eslint.config.mjs
-├── middleware.ts  // Basic認証
+├── proxy.ts       // Basic認証（Next.js 16のProxy）
 ├── next.config.ts
 ├── package-lock.json
 ├── package.json
@@ -35,7 +35,7 @@ database/
 | `/search/[id]/edit` | 棋譜の編集ページ |
 
 ## 認証
-サイト全体を `middleware.ts` によるBasic認証で保護しています．静的アセット（`/_next/static` など）以外の全てのページ・APIにアクセスする際、ブラウザの認証ダイアログでユーザー名とパスワードの入力が必要です．
+サイト全体を `proxy.ts`（Next.js 16でmiddlewareから改称）によるBasic認証で保護しています．静的アセット（`/_next/static` など）以外の全てのページ・APIにアクセスする際、ブラウザの認証ダイアログでユーザー名とパスワードの入力が必要です．
 
 ## API
 | エンドポイント | 内容 |
