@@ -35,9 +35,9 @@ export default function Home() {
             </div>
             <div className="bg-white rounded-2xl shadow p-6 text-center space-y-4">
               <UploadCloud className="mx-auto text-green-600 w-12 h-12" />
-              <h3 className="text-xl font-bold">② アップロードページへ</h3>
+              <h3 className="text-xl font-bold">② 棋譜を貼り付け</h3>
               <p className="text-gray-600">
-                アップロード画面でファイルを選択、または直接ペーストします。
+                入力画面に棋譜を貼り付けると、対局者名や大会名などが自動で入力されます。
               </p>
             </div>
             <div className="bg-white rounded-2xl shadow p-6 text-center space-y-4">
