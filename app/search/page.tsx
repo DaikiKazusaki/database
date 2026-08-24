@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import GameTable from './GameTable';
 import type { Metadata } from "next";
 
@@ -7,5 +8,9 @@ export const metadata: Metadata = {
 };
 
 export default function SearchPage() {
-  return <GameTable />;
+  return (
+    <Suspense fallback={<p className="p-6 text-center text-gray-600">読み込み中...</p>}>
+      <GameTable />
+    </Suspense>
+  );
 }

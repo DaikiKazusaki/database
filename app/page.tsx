@@ -1,11 +1,6 @@
-import { Metadata } from "next";
-import LoginForm from "./LoginForm";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = {
-  title: "ログイン",
-  description: "大阪大学将棋部棋譜データベースログインページ",
-};
-
-export default function LoginPage() {
-  return <LoginForm />;
+// サイト全体はmiddlewareのBasic認証で保護しているため、ルートはホームへ送る
+export default function RootPage() {
+  redirect("/home");
 }

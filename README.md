@@ -15,6 +15,7 @@ database/
 ├── .gitignore
 ├── README.md
 ├── eslint.config.mjs
+├── middleware.ts  // Basic認証
 ├── next.config.ts
 ├── package-lock.json
 ├── package.json
@@ -25,10 +26,21 @@ database/
 ## ページ構成
 | ページ名 | 内容 |
 | ---- | ---- |
-| `/` | パスワード入力画面 |
+| `/` | `/home` へリダイレクト（サイト全体はBasic認証で保護） |
 | `/home` | ホーム画面 |
 | `/input` | 棋譜入力ページ |
 | `/search` | 棋譜検索ページ |
+| `/search/[id]` | 棋譜再生ページ（個別の対局） |
+
+## 認証
+サイト全体を `middleware.ts` によるBasic認証で保護しています．静的アセット（`/_next/static` など）以外の全てのページ・APIにアクセスする際、ブラウザの認証ダイアログでユーザー名とパスワードの入力が必要です．
+
+## 環境変数
+| 変数名 | 内容 |
+| ---- | ---- |
+| `BASIC_AUTH_USER` | Basic認証のユーザー名 |
+| `BASIC_AUTH_PASSWORD` | Basic認証のパスワード |
+| `DATABASE_URL` | Neonの接続文字列 |
 
 ## 参考にしたサイト
 - [Vercel ホームページ](https://vercel.com/)

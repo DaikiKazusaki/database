@@ -1,28 +1,21 @@
 "use client"
 
-import { useEffect, useState } from "react"
-
-type Game = {
-  id: number
-  sente_name: string
-  sente_univ: string
-  sente_grade: string
-  gote_name: string
-  gote_univ: string
-  gote_grade: string
-  event: string
-  date: string
-  result: string
-  kifu: string
-}
+import Link from "next/link"
+import { useEffect, useMemo, useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import type { Game } from "./types"
 
 export default function GameTable() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
   const [gameList, setGameList] = useState<Game[]>([])
-  const [selectedGame, setSelectedGame] = useState<Game | null>(null)
-  const [searchQuery, setSearchQuery] = useState("")
-  const [startDate, setStartDate] = useState("")
-  const [endDate, setEndDate] = useState("")
+  const [loading, setLoading] = useState(true)
+  const [searchQuery, setSearchQuery] = useState(searchParams.get("q") ?? "")
+  const [startDate, setStartDate] = useState(searchParams.get("from") ?? "")
+  const [endDate, setEndDate] = useState(searchParams.get("to") ?? "")
   const [deletingGameId, setDeletingGameId] = useState<number | null>(null)
+  const [copiedGameId, setCopiedGameId] = useState<number | null>(null)
 
   // データ取得
   useEffect(() => {
@@ -33,10 +26,25 @@ export default function GameTable() {
         setGameList(data)
       } catch (err) {
         console.error("データ取得エラー:", err)
+      } finally {
+        setLoading(false)
       }
     }
     fetchGames()
   }, [])
+
+  // 検索条件をURLに保持し、棋譜ページから戻っても条件が消えないようにする
+  const queryString = useMemo(() => {
+    const params = new URLSearchParams()
+    if (searchQuery) params.set("q", searchQuery)
+    if (startDate) params.set("from", startDate)
+    if (endDate) params.set("to", endDate)
+    return params.toString()
+  }, [searchQuery, startDate, endDate])
+
+  useEffect(() => {
+    router.replace(queryString ? `/search?${queryString}` : "/search", { scroll: false })
+  }, [queryString, router])
 
   const filteredGames = gameList.filter((game) => {
     const query = searchQuery.toLowerCase()
@@ -58,10 +66,11 @@ export default function GameTable() {
     return inDateRange && matchesQuery
   })
 
-  const handleCopy = async (kifu: string) => {
+  const handleCopy = async (game: Game) => {
     try {
-      await navigator.clipboard.writeText(kifu)
-      alert("棋譜をコピーしました")
+      await navigator.clipboard.writeText(game.kifu)
+      setCopiedGameId(game.id)
+      setTimeout(() => setCopiedGameId((prev) => (prev === game.id ? null : prev)), 2000)
     } catch {
       alert("コピーに失敗しました")
     }
@@ -131,12 +140,21 @@ export default function GameTable() {
         </div>
       </div>
 
+      {loading && <p className="text-center text-gray-600">読み込み中...</p>}
+
+      {!loading && filteredGames.length === 0 && (
+        <p className="text-center text-gray-600">該当する棋譜が見つかりませんでした．</p>
+      )}
+
       {/* 棋譜一覧 */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {filteredGames.map((game) => (
           <div key={game.id} className="bg-white shadow rounded-xl p-4 border border-gray-200 flex flex-col">
             <div className="flex flex-col md:flex-row justify-between gap-4">
-              <div className="flex-1">
+              <Link
+                href={`/search/${game.id}${queryString ? `?${queryString}` : ""}`}
+                className="flex-1 hover:opacity-80"
+              >
                 <div className="text-sm text-gray-600 mb-2">
                   {new Date(game.date).toLocaleDateString("ja-JP")}・{game.event}
                 </div>
@@ -152,21 +170,21 @@ export default function GameTable() {
                   <strong>結果：</strong>
                   {game.result}
                 </div>
-              </div>
+              </Link>
 
               <div className="flex flex-row md:flex-col gap-2 mt-4 md:mt-0 md:items-end w-full md:w-auto">
                 <button
-                  onClick={() => handleCopy(game.kifu)}
+                  onClick={() => handleCopy(game)}
                   className="w-full md:w-[100px] px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
                 >
-                  コピー
+                  {copiedGameId === game.id ? "コピー済み" : "コピー"}
                 </button>
-                <button
-                  onClick={() => setSelectedGame(game)}
-                  className="w-full md:w-[100px] px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 text-sm"
+                <Link
+                  href={`/search/${game.id}${queryString ? `?${queryString}` : ""}`}
+                  className="w-full md:w-[100px] px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 text-sm text-center"
                 >
                   棋譜再生
-                </button>
+                </Link>
                 <button
                   onClick={() => handleDelete(game.id)}
                   className="w-full md:w-[100px] px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
@@ -178,69 +196,6 @@ export default function GameTable() {
           </div>
         ))}
       </div>
-
-      {/* 棋譜再生 */}
-      {selectedGame && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-          onClick={() => setSelectedGame(null)}
-        >
-          <div
-            className="bg-white rounded-xl shadow-lg max-w-2xl w-full p-6 relative"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={() => setSelectedGame(null)}
-              className="absolute top-2 right-3 text-gray-600 hover:text-red-600 text-3xl font-bold leading-none"
-            >
-              ✕
-            </button>
-            <h2 className="text-lg font-bold mb-4">棋譜再生</h2>
-            <div className="relative w-full h-[600px]">
-              <iframe
-                className="w-full h-full"
-                style={{ border: "none" }}
-                srcDoc={`
-                  <!DOCTYPE html>
-                  <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <script defer src="https://cdn.jsdelivr.net/npm/shogi-player@1.1.24"></script>
-                    <style>
-                      .container {
-                        display: flex;
-                        justify-content: center;
-                      }
-                      shogi-player-wc {
-                        flex-basis: 640px;
-                      }
-                    </style>
-                  </head>
-                  <body>
-                    <div class="container">
-                      <shogi-player-wc
-                        id="player"
-                        sp_turn="0"
-                        sp_controller="true"
-                        sp_piece_variant="portella"
-                        sp_board_variant="wood_normal"
-                        sp_coordinate="true"
-                        sp_autoplay="false"
-                        sp_player_info='{
-                          "black": { name: "${(selectedGame.sente_name + "（" + selectedGame.sente_univ + "・" + selectedGame.sente_grade + "）").replace(/"/g, "&quot;")}"},
-                          "white": { name: "${(selectedGame.gote_name + "（" + selectedGame.gote_univ + "・" + selectedGame.gote_grade + "）").replace(/"/g, "&quot;")}"}
-                        }'
-                        sp_body="${selectedGame.kifu.replace(/"/g, "&quot;")}"
-                        ></shogi-player-wc>
-                    </div>
-                  </body>
-                  </html>  
-                `}
-              />
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* 削除確認ダイアログ */}
       {deletingGameId !== null && (
