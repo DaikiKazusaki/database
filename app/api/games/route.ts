@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getSql } from '../../lib/db';
+import { normalizeUniversity } from '../../lib/normalizeUniversity';
 
 const DEFAULT_LIMIT = 20;
 const MAX_LIMIT = 100;
@@ -24,7 +25,9 @@ function toDate(value: string | null) {
 function toPattern(query: string) {
   // ILIKE のワイルドカードをエスケープしてから部分一致にする
   const escaped = query.replace(/[\\%_]/g, (char) => `\\${char}`);
-  return `%${escaped.replace(/大学/g, '')}%`;
+  // 「大阪大学」「阪大」で検索しても「大阪」の対局が見つかるようにする
+  const normalized = normalizeUniversity(escaped).replace(/大学/g, '');
+  return `%${normalized}%`;
 }
 
 function toNumber(value: string | null, fallback: number) {

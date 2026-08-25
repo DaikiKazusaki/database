@@ -1,3 +1,5 @@
+import { normalizeUniversity } from "./normalizeUniversity"
+
 export const GAME_FIELDS = [
   "sente_name",
   "sente_univ",
@@ -59,6 +61,15 @@ export function readGameValues(formData: FormData): GameValues {
     values[field] = typeof input === "string" ? input.trim() : ""
   }
   return values
+}
+
+// 保存前に大学名の表記を揃える（入力欄に何が打たれても正規形で保存する）
+export function normalizeGameValues(values: GameValues): GameValues {
+  return {
+    ...values,
+    sente_univ: normalizeUniversity(values.sente_univ),
+    gote_univ: normalizeUniversity(values.gote_univ),
+  }
 }
 
 /**

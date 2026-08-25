@@ -3,6 +3,7 @@ import { parseKifu } from '../../lib/parseKifu';
 import {
   GAME_FIELDS,
   cleanKifu,
+  normalizeGameValues,
   readGameValues,
   validateGame,
 } from '../../lib/gameValidation';
@@ -26,10 +27,11 @@ export async function POST(request: Request) {
 
   // フォームで空のまま送られた項目は棋譜から補完する
   const parsed = parseKifu(kifu);
-  const values = readGameValues(formData);
+  const input = readGameValues(formData);
   for (const field of GAME_FIELDS) {
-    if (!values[field]) values[field] = parsed[field];
+    if (!input[field]) input[field] = parsed[field];
   }
+  const values = normalizeGameValues(input);
 
   const errors = validateGame(values, kifu);
   if (errors.length > 0) {

@@ -1,5 +1,10 @@
 import { getSql } from '../../lib/db';
-import { cleanKifu, readGameValues, validateGame } from '../../lib/gameValidation';
+import {
+  cleanKifu,
+  normalizeGameValues,
+  readGameValues,
+  validateGame,
+} from '../../lib/gameValidation';
 
 function textResponse(body: string, status: number) {
   return new Response(body, {
@@ -21,7 +26,7 @@ export async function POST(request: Request) {
   }
 
   const kifu = cleanKifu(kifuRaw);
-  const values = readGameValues(formData);
+  const values = normalizeGameValues(readGameValues(formData));
 
   const errors = validateGame(values, kifu);
   if (errors.length > 0) {
@@ -31,15 +36,25 @@ export async function POST(request: Request) {
   try {
     const sql = getSql();
 
-    // 自分以外に同じ棋譜が無いか確認する
-    const duplicated = await sql`
-      SELECT id FROM games
-       WHERE md5(kifu) = md5(${kifu}) AND deleted_at IS NULL AND id <> ${gameId}
-       LIMIT 1
+    const checked = await sql`
+      SELECT
+        md5(${kifu}) AS new_hash,
+        (SELECT md5(kifu) FROM games WHERE id = ${gameId} AND deleted_at IS NULL) AS current_hash,
+        (SELECT id FROM games
+          WHERE md5(kifu) = md5(${kifu}) AND deleted_at IS NULL AND id <> ${gameId}
+          LIMIT 1) AS duplicate_id
     `;
-    if (duplicated.length > 0) {
+    const { new_hash, current_hash, duplicate_id } = checked[0];
+
+    if (!current_hash) {
+      return textResponse('棋譜が見つかりません．', 404);
+    }
+
+    // 重複チェックは棋譜本文を書き換えたときだけ行う。
+    // 元から同じ棋譜が複数登録されている場合に、対局者名などの修正までできなくなるのを防ぐため。
+    if (new_hash !== current_hash && duplicate_id) {
       return textResponse(
-        `同じ棋譜が既に登録されています（ID: ${duplicated[0].id}）．`,
+        `同じ棋譜が既に登録されています（ID: ${duplicate_id}）．`,
         409
       );
     }

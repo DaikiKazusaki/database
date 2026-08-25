@@ -1,3 +1,5 @@
+import { normalizeUniversity } from "./normalizeUniversity"
+
 export type ParsedKifu = {
   sente_name: string
   sente_univ: string
@@ -139,10 +141,10 @@ export function parseKifu(kifu: string): ParsedKifu {
 
   return {
     sente_name: sente.name,
-    sente_univ: sente.univ,
+    sente_univ: normalizeUniversity(sente.univ),
     sente_grade: sente.grade,
     gote_name: gote.name,
-    gote_univ: gote.univ,
+    gote_univ: normalizeUniversity(gote.univ),
     gote_grade: gote.grade,
     event: headerValue(lines, "棋戦") || headerValue(lines, "大会"),
     date: parseDate(lines),
