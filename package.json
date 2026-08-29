@@ -2,11 +2,20 @@
   "name": "database",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "backup": "node --env-file=.env.local scripts/backup-games.mjs",
+    "restore": "node --env-file=.env.local scripts/restore-games.mjs",
+    "dump-schema": "node --env-file=.env.local scripts/dump-schema.mjs"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.0",
@@ -14,8 +23,7 @@
     "next": "^16.3.2",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
-    "react-icons": "^5.5.0",
-    "shogi.js": "^5.4.1"
+    "react-icons": "^5.5.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -25,6 +33,7 @@
     "eslint": "^9",
     "eslint-config-next": "^16.3.2",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.11"
   }
 }

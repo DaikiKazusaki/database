@@ -1,0 +1,71 @@
+name: 棋譜の日次バックアップ
+
+# 毎日 03:00 JST（18:00 UTC）に games テーブルを JSON で保存する。
+# 手動で走らせたいときは Actions タブの「Run workflow」から。
+on:
+  schedule:
+    - cron: "0 18 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - name: 棋譜を書き出す
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: node scripts/backup-games.mjs --out backup
+
+      # 保存先その1：Actionsのアーティファクト。設定不要で動くが90日で消える。
+      - uses: actions/upload-artifact@v4
+        with:
+          name: games-backup
+          path: backup/*.json
+          retention-days: 90
+
+      # 保存先その2：別リポジトリへのコミット（任意・推奨）。
+      # 棋譜には実名が含まれるため、保存先は必ず「プライベート」リポジトリにすること。
+      # 有効にするには次の2つを Settings > Secrets and variables > Actions に登録する：
+      #   BACKUP_REPO   例: osaka-univ-shogi/database-backup
+      #   BACKUP_TOKEN  そのリポジトリへの書き込み権限を持つトークン
+      # 未登録なら以下2ステップは自動的に飛ばされる。
+      - name: 別リポジトリへの保存が設定されているか確認する
+        id: check
+        env:
+          BACKUP_REPO: ${{ secrets.BACKUP_REPO }}
+        run: echo "enabled=${BACKUP_REPO:+yes}" >> "$GITHUB_OUTPUT"
+
+      - name: 別リポジトリへコミットする
+        if: steps.check.outputs.enabled == 'yes'
+        env:
+          BACKUP_REPO: ${{ secrets.BACKUP_REPO }}
+          BACKUP_TOKEN: ${{ secrets.BACKUP_TOKEN }}
+        run: |
+          git clone --depth 1 "https://x-access-token:${BACKUP_TOKEN}@github.com/${BACKUP_REPO}.git" backup-repo
+          cp backup/*.json backup-repo/
+          cd backup-repo
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          # 前日から中身が変わっていない日は空コミットになるので、その場合は何もしない
+          if git diff --staged --quiet; then
+            echo "変更なし．コミットしません．"
+          else
+            git commit -m "backup: $(date -u +%Y-%m-%d)"
+            git push
+          fi

@@ -1,0 +1,39 @@
+name: CI
+
+# PRと main への push で、型・Lint・テストを通す。
+# 本番ビルドは Vercel 側が毎回走らせるので、ここでは重複させていない。
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      # 失敗しても残りを走らせる。1回のCIで全部の問題が見えるほうが直しやすい
+      - name: 型チェック
+        run: npm run typecheck
+
+      - name: Lint
+        if: '!cancelled()'
+        run: npm run lint
+
+      - name: テスト
+        if: '!cancelled()'
+        run: npm test
