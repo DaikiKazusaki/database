@@ -1,0 +1,29 @@
+version: 2
+
+# 更新を溜め込むと、数年後に一気に上げることになって誰も手を出せなくなる。
+# 週1回に分けて、CIが通ったものから取り込んでいく。
+updates:
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: Asia/Tokyo
+    open-pull-requests-limit: 5
+    groups:
+      # パッチ・マイナーはまとめて1本のPRにする。数が多いと誰も見なくなるため
+      minor-and-patch:
+        update-types: [minor, patch]
+    commit-message:
+      prefix: "chore(deps)"
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: Asia/Tokyo
+    commit-message:
+      prefix: "chore(ci)"

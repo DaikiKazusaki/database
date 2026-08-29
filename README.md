@@ -23,22 +23,49 @@ npm run dev
 
 開発用に別のDBを立てる場合は，Neonで空のデータベースを作って `db/schema.sql` を流し込む．
 
+引き継ぎ・アカウント関係は [docs/handover.md](docs/handover.md)，
+障害が起きたときは [docs/runbook.md](docs/runbook.md) を見ること．
+
+## 変更の進め方
+
+```bash
+npm run typecheck   # tsc --noEmit
+npm run lint
+npm test            # vitest（app/lib のロジック）
+npm run test:watch  # 書きながら回す
+```
+
+この3つは `.github/workflows/ci.yml` がPRごとに走らせる．mainへ直接pushせず，PRを経由すること．
+ただし1人しか動いていない期間は，CIが通っていればセルフマージしてよい．
+
+棋譜の解析・検証のロジックは `app/lib/` に置き，Next.jsのAPIをimportしないこと．
+フレームワークが変わっても，この部分だけは持ち出せるようにしておくため．
+
+`app/lib/parseKifu.ts` を触るときは `app/lib/__tests__/fixtures/` に棋譜のサンプルがある．
+新しい棋譜ソフトに対応したら，その出力を1つ足すこと．これが対応形式の仕様書がわりになる．
+フィクスチャは架空の対局にすること（実名を含む棋譜をリポジトリに置かない）．
+
 ## ファイル構成
 ```
 ----
 database/
 ├── .github/
-|   └── workflows  // 棋譜の日次バックアップ
+|   ├── workflows  // CI・棋譜の日次バックアップ
+|   └── dependabot.yml
 ├── app/
 |   ├── api        
 |   ├── components // 全てのページで用いるファイル
 |   ├── home       // ホーム画面
 |   ├── input      // 棋譜入力画面
 |   ├── lib        // 棋譜の解析・DB接続・入力検証
+|   |   └── __tests__ // ロジックのテストと棋譜のサンプル
 |   ├── search     // 棋譜検索画面
 │   └── page.tsx
 ├── db/
 |   └── schema.sql // DBのスキーマ（自動生成・手で編集しない）
+├── docs/
+|   ├── handover.md // 引き継ぎ・アカウント台帳
+|   └── runbook.md  // 障害対応
 ├── public/
 ├── scripts/       // バックアップ・復元・スキーマ書き出し
 ├── .env.example   // 必要な環境変数の雛形
