@@ -3,6 +3,16 @@
 大阪大学将棋部の棋譜データベース．部員が入れ替わっても運用が止まらないよう，
 必要な設定はすべてこのリポジトリに置いてある．初めて触る人は次の「ローカル開発の始め方」から読むこと．
 
+## ドキュメント
+
+| 文書 | 中身 | よく開くところ |
+| --- | --- | --- |
+| [docs/handover.md](docs/handover.md) | 引き継ぎ．誰がアカウントを持っているか，シークレットはどこにあるか，代替わりで何をするか | [アカウント台帳](docs/handover.md#アカウント台帳)／[部のアカウントへの移管](docs/handover.md#部のアカウントへの移管)／[Basic認証のパスワードを変えるとき](docs/handover.md#basic認証のパスワードを変えるとき)／[毎年やること](docs/handover.md#毎年やること) |
+| [docs/runbook.md](docs/runbook.md) | 障害対応．症状から原因を切り分ける手順 | [症状別](docs/runbook.md#症状別)／[削除した棋譜を戻す](docs/runbook.md#削除した棋譜を戻す)／[バックアップから復元する](docs/runbook.md#バックアップから復元する)／[棋譜がまとめて消えたとき](docs/runbook.md#棋譜がまとめて消えたとき) |
+| このREADME | 開発の始め方，画面とAPIの一覧，DBとバックアップの扱い | [ローカル開発の始め方](#ローカル開発の始め方)／[変更の進め方](#変更の進め方)／[バックアップと復元](#バックアップと復元) |
+
+担当を引き継ぐときは `docs/handover.md` を上から埋め直す．サイトが落ちたときは `docs/runbook.md` から読む．
+
 ## ローカル開発の始め方
 
 ```bash
@@ -22,9 +32,7 @@ npm run dev
 ```
 
 開発用に別のDBを立てる場合は，Neonで空のデータベースを作って `db/schema.sql` を流し込む．
-
-引き継ぎ・アカウント関係は [docs/handover.md](docs/handover.md)，
-障害が起きたときは [docs/runbook.md](docs/runbook.md) を見ること．
+`.env.local` に入れる値の出どころは [docs/handover.md](docs/handover.md#シークレットの置き場所) にまとめてある．
 
 ## 変更の進め方
 
