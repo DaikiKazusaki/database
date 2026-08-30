@@ -15,6 +15,19 @@ updates:
       # パッチ・マイナーはまとめて1本のPRにする。数が多いと誰も見なくなるため
       minor-and-patch:
         update-types: [minor, patch]
+    ignore:
+      # eslint と typescript のメジャー更新は eslint-config-next が追いつくまで止める。
+      # 2026-08-30 に試したときの症状（どちらも npm run lint が落ちる）:
+      #   eslint 10     -> eslint-plugin-react が削除済みAPIを呼ぶ
+      #                    「contextOrFilename.getFilename is not a function」
+      #   typescript 7  -> 「typescript-eslint does not support TS 7.0.」
+      # こちらのコードの問題ではないので、待つ以外にできることがない。
+      # 止めっぱなしにしないよう、docs/handover.md の「毎年やること」で見直す。
+      # 解除の判断は、この2行を消して npm run lint が通るかを見るだけでよい。
+      - dependency-name: eslint
+        update-types: [version-update:semver-major]
+      - dependency-name: typescript
+        update-types: [version-update:semver-major]
     commit-message:
       prefix: "chore(deps)"
 
